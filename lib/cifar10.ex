@@ -2,9 +2,8 @@ defmodule Scidata.CIFAR10 do
   require Scidata.Utils
   alias Scidata.Utils
 
-  @default_data_path "tmp/cifar10"
-  @base_url 'https://www.cs.toronto.edu/~kriz/'
-  @dataset_file 'cifar-10-binary.tar.gz'
+  @base_url "https://www.cs.toronto.edu/~kriz/"
+  @dataset_file "cifar-10-binary.tar.gz"
   @train_images_shape {50000, 3, 32, 32}
   @train_labels_shape {50000}
   @test_images_shape {10000, 3, 32, 32}
@@ -19,36 +18,37 @@ defmodule Scidata.CIFAR10 do
     end
   end
 
-  defp download_dataset(dataset_type, data_path, transform_images, transform_labels) do
-    gz = Utils.unzip_cache_or_download(@base_url, @dataset_file, data_path)
+  defp download_dataset(dataset_type, opts) do
+    transform_images = opts[:transform_images] || (& &1)
+    transform_labels = opts[:transform_labels] || (& &1)
 
-    with {:ok, files} <- :erl_tar.extract({:binary, gz}, [:memory, :compressed]) do
-      {imgs, labels} =
-        files
-        |> Enum.filter(fn {fname, _} ->
-          String.match?(
-            List.to_string(fname),
-            case dataset_type do
-              :train -> ~r/data_batch/
-              :test -> ~r/test_batch/
-            end
-          )
-        end)
-        |> Enum.map(fn {_, content} -> Task.async(fn -> parse_images(content) end) end)
-        |> Enum.map(&Task.await(&1, :infinity))
-        |> Enum.reduce({<<>>, <<>>}, fn {image, label}, {image_acc, label_acc} ->
-          {image_acc <> image, label_acc <> label}
-        end)
+    files = Utils.get!(@base_url <> @dataset_file).body
 
-      {transform_images.(
-         {imgs, {:u, 8},
-          if(dataset_type == :test, do: @test_images_shape, else: @train_images_shape)}
-       ),
-       transform_labels.(
-         {labels, {:u, 8},
-          if(dataset_type == :test, do: @test_labels_shape, else: @train_labels_shape)}
-       )}
-    end
+    {imgs, labels} =
+      files
+      |> Enum.filter(fn {fname, _} ->
+        String.match?(
+          List.to_string(fname),
+          case dataset_type do
+            :train -> ~r/data_batch/
+            :test -> ~r/test_batch/
+          end
+        )
+      end)
+      |> Enum.map(fn {_, content} -> Task.async(fn -> parse_images(content) end) end)
+      |> Enum.map(&Task.await(&1, :infinity))
+      |> Enum.reduce({<<>>, <<>>}, fn {image, label}, {image_acc, label_acc} ->
+        {image_acc <> image, label_acc <> label}
+      end)
+
+    {transform_images.(
+       {imgs, {:u, 8},
+        if(dataset_type == :test, do: @test_images_shape, else: @train_images_shape)}
+     ),
+     transform_labels.(
+       {labels, {:u, 8},
+        if(dataset_type == :test, do: @test_labels_shape, else: @train_labels_shape)}
+     )}
   end
 
   @doc """
@@ -56,11 +56,12 @@ defmodule Scidata.CIFAR10 do
 
   ## Options
 
-    * `:datapath` - path where the dataset .gz should be stored locally
+    * `:transform_images` - A function that transforms images, defaults to
+      `& &1`.
 
-    * `:transform_images` - accepts accept a tuple like
-      `{binary_data, tensor_type, data_shape}` which can be used for
-      converting the `binary_data` to a tensor with a function like
+      It accepts a tuple like `{binary_data, tensor_type, data_shape}` which
+      can be used for converting the `binary_data` to a tensor with a function
+      like:
 
           fn {labels_binary, type, _shape} ->
             labels_binary
@@ -73,25 +74,20 @@ defmodule Scidata.CIFAR10 do
     * `:transform_labels` - similar to `:transform_images` but applied to
       dataset labels
 
-    * `:test_set` - indicate whether the training set or the test set
-      should be fetched
-
   ## Examples
 
-    iex> Scidata.CIFAR10.download()
-    {{<<59, 43, 50, 68, 98, 119, 139, 145, 149, 149, 131, 125, 142, 144, 137, 129,
-    137, 134, 124, 139, 139, 133, 136, 139, 152, 163, 168, 159, 158, 158, 152,
-    148, 16, 0, 18, 51, 88, 120, 128, 127, 126, 116, 106, 101, 105, 113, 109,
-    112, ...>>, {:u, 8}, {50000, 3, 32, 32}},
-    {<<6, 9, 9, 4, 1, 1, 2, 7, 8, 3, 4, 7, 7, 2, 9, 9, 9, 3, 2, 6, 4, 3, 6, 6, 2,
-        6, 3, 5, 4, 0, 0, 9, 1, 3, 4, 0, 3, 7, 3, 3, 5, 2, 2, 7, 1, 1, 1, ...>>,
-      {:u, 8}, {50000}}}
+      iex> Scidata.CIFAR10.download()
+      {{<<59, 43, 50, 68, 98, 119, 139, 145, 149, 149, 131, 125, 142, 144, 137, 129,
+      137, 134, 124, 139, 139, 133, 136, 139, 152, 163, 168, 159, 158, 158, 152,
+      148, 16, 0, 18, 51, 88, 120, 128, 127, 126, 116, 106, 101, 105, 113, 109,
+      112, ...>>, {:u, 8}, {50000, 3, 32, 32}},
+      {<<6, 9, 9, 4, 1, 1, 2, 7, 8, 3, 4, 7, 7, 2, 9, 9, 9, 3, 2, 6, 4, 3, 6, 6, 2,
+          6, 3, 5, 4, 0, 0, 9, 1, 3, 4, 0, 3, 7, 3, 3, 5, 2, 2, 7, 1, 1, 1, ...>>,
+        {:u, 8}, {50000}}}
 
   """
   def download(opts \\ []) do
-    {data_path, transform_images, transform_labels} = Utils.get_download_args(opts)
-
-    download_dataset(:train, data_path, transform_images, transform_labels)
+    download_dataset(:train, opts)
   end
 
   @doc """
@@ -100,8 +96,6 @@ defmodule Scidata.CIFAR10 do
   Accepts the same options as `download/1`.
   """
   def download_test(opts \\ []) do
-    {data_path, transform_images, transform_labels} = Utils.get_download_args(opts)
-
-    download_dataset(:test, data_path, transform_images, transform_labels)
+    download_dataset(:test, opts)
   end
 end

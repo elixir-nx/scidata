@@ -34,10 +34,13 @@ defmodule Scidata.MNIST do
   Downloads the MNIST dataset or fetches it locally.
 
   ## Options
-  * `datapath` - path where the dataset .gz should be stored locally
-  * `transform_images/1` - accepts accept a tuple like
+
+    * `:datapath` - path where the dataset .gz should be stored locally
+
+    * `:transform_images` - accepts accept a tuple like
       `{binary_data, tensor_type, data_shape}` which can be used for
       converting the `binary_data` to a tensor with a function like
+
           fn {labels_binary, type, _shape} ->
             labels_binary
             |> Nx.from_binary(type)
@@ -45,9 +48,11 @@ defmodule Scidata.MNIST do
             |> Nx.equal(Nx.tensor(Enum.to_list(0..9)))
             |> Nx.to_batched_list(32)
           end
-  * `transform_labels/1` - similar to `transform_images/1` but applied to
+
+    * `:transform_labels` - similar to `:transform_images` but applied to
       dataset labels
-  * `test_set` - indicate whether the training set or the test set
+
+    * `:test_set` - indicate whether the training set or the test set
         should be fetched
   """
   def download(opts \\ []),

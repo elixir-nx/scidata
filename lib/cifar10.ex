@@ -20,11 +20,15 @@ defmodule Scidata.CIFAR10 do
 
   @doc """
   Downloads the CIFAR10 dataset or fetches it locally.
+
   ## Options
-  * `datapath` - path where the dataset .gz should be stored locally
-  * `transform_images/1` - accepts accept a tuple like
+
+    * `:datapath` - path where the dataset .gz should be stored locally
+
+    * `:transform_images` - accepts accept a tuple like
       `{binary_data, tensor_type, data_shape}` which can be used for
       converting the `binary_data` to a tensor with a function like
+
           fn {labels_binary, type, _shape} ->
             labels_binary
             |> Nx.from_binary(type)
@@ -32,22 +36,24 @@ defmodule Scidata.CIFAR10 do
             |> Nx.equal(Nx.tensor(Enum.to_list(0..9)))
             |> Nx.to_batched_list(32)
           end
-  * `transform_labels/1` - similar to `transform_images/1` but applied to
+
+    * `:transform_labels` - similar to `:transform_images` but applied to
       dataset labels
-  * `test_set` - indicate whether the training set or the test set
+
+    * `:test_set` - indicate whether the training set or the test set
         should be fetched
 
-  Examples:
-    iex> Scidata.CIFAR10.download()
-    Fetching cifar-10-binary.tar.gz from https://www.cs.toronto.edu/~kriz/
+  ## Examples
 
-    {{<<59, 43, 50, 68, 98, 119, 139, 145, 149, 149, 131, 125, 142, 144, 137, 129,
-    137, 134, 124, 139, 139, 133, 136, 139, 152, 163, 168, 159, 158, 158, 152,
-    148, 16, 0, 18, 51, 88, 120, 128, 127, 126, 116, 106, 101, 105, 113, 109,
-    112, ...>>, {:u, 8}, {50000, 3, 32, 32}},
-    {<<6, 9, 9, 4, 1, 1, 2, 7, 8, 3, 4, 7, 7, 2, 9, 9, 9, 3, 2, 6, 4, 3, 6, 6, 2,
-        6, 3, 5, 4, 0, 0, 9, 1, 3, 4, 0, 3, 7, 3, 3, 5, 2, 2, 7, 1, 1, 1, ...>>,
-      {:u, 8}, {50000}}}
+      iex> Scidata.CIFAR10.download()
+      {{<<59, 43, 50, 68, 98, 119, 139, 145, 149, 149, 131, 125, 142, 144, 137, 129,
+      137, 134, 124, 139, 139, 133, 136, 139, 152, 163, 168, 159, 158, 158, 152,
+      148, 16, 0, 18, 51, 88, 120, 128, 127, 126, 116, 106, 101, 105, 113, 109,
+      112, ...>>, {:u, 8}, {50000, 3, 32, 32}},
+      {<<6, 9, 9, 4, 1, 1, 2, 7, 8, 3, 4, 7, 7, 2, 9, 9, 9, 3, 2, 6, 4, 3, 6, 6, 2,
+          6, 3, 5, 4, 0, 0, 9, 1, 3, 4, 0, 3, 7, 3, 3, 5, 2, 2, 7, 1, 1, 1, ...>>,
+        {:u, 8}, {50000}}}
+
   """
   def download(opts \\ []) do
     data_path = opts[:data_path] || @default_data_path

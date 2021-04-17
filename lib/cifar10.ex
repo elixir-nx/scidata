@@ -4,6 +4,10 @@ defmodule Scidata.CIFAR10 do
   @default_data_path "tmp/cifar10"
   @base_url 'https://www.cs.toronto.edu/~kriz/'
   @dataset_file 'cifar-10-binary.tar.gz'
+  @train_images_shape {50000, 3, 32, 32}
+  @train_labels_shape {50000}
+  @test_images_shape {10000, 3, 32, 32}
+  @test_labels_shape {10000}
 
   defp parse_images(content) do
     for <<example::size(3073)-binary <- content>>, reduce: {<<>>, <<>>} do
@@ -30,6 +34,8 @@ defmodule Scidata.CIFAR10 do
           end
   * `transform_labels/1` - similar to `transform_images/1` but applied to
       dataset labels
+  * `test_set` - indicate whether the training set or the test set
+        should be fetched
 
   Examples:
     iex> Scidata.CIFAR10.download()
@@ -53,15 +59,28 @@ defmodule Scidata.CIFAR10 do
     with {:ok, files} <- :erl_tar.extract({:binary, gz}, [:memory, :compressed]) do
       {imgs, labels} =
         files
-        |> Enum.filter(fn {fname, _} -> String.match?(List.to_string(fname), ~r/data_batch/) end)
+        |> Enum.filter(fn {fname, _} ->
+          String.match?(
+            List.to_string(fname),
+            if opts[:test_set] do
+              ~r/test_batch/
+            else
+              ~r/data_batch/
+            end
+          )
+        end)
         |> Enum.map(fn {_, content} -> Task.async(fn -> parse_images(content) end) end)
         |> Enum.map(&Task.await(&1, :infinity))
         |> Enum.reduce({<<>>, <<>>}, fn {image, label}, {image_acc, label_acc} ->
           {image_acc <> image, label_acc <> label}
         end)
 
-      {transform_images.({imgs, {:u, 8}, {50000, 3, 32, 32}}),
-       transform_labels.({labels, {:u, 8}, {50000}})}
+      {transform_images.(
+         {imgs, {:u, 8}, if(opts[:test_set], do: @test_images_shape, else: @train_images_shape)}
+       ),
+       transform_labels.(
+         {labels, {:u, 8}, if(opts[:test_set], do: @test_labels_shape, else: @train_labels_shape)}
+       )}
     end
   end
 end

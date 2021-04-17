@@ -1,4 +1,4 @@
-# SciData
+# Scidata
 
 ## Usage
 
@@ -7,7 +7,7 @@ We currently support MNIST, FashionMNIST, and CIFAR10 training datasets.
 Download or fetch datasets locally:
 
 ```elixir
-{train_images, train_labels} = SciData.MNIST.download()
+{train_images, train_labels} = Scidata.MNIST.download()
 
 # Unpack train_images like...
 {images_binary, tensor_type, shape} = train_images
@@ -25,7 +25,7 @@ transform_images = fn {binary, type, shape} ->
 end
 
 {train_images, train_labels} =
-  SciData.MNIST.download(transform_images: transform_images)
+  Scidata.MNIST.download(transform_images: transform_images)
 
 # Transform labels as well, e.g. get one-hot encoding
 transform_labels = fn {labels_binary, type, _} ->
@@ -37,7 +37,7 @@ transform_labels = fn {labels_binary, type, _} ->
 end
 
 {images, labels} =
-  SciData.MNIST.download(
+  Scidata.MNIST.download(
     transform_images: transform_images,
     transform_labels: transform_labels
   )

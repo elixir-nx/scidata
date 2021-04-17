@@ -1,4 +1,4 @@
-defmodule SciData.MixProject do
+defmodule Scidata.MixProject do
   use Mix.Project
 
   def project do

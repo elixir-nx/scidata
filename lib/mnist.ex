@@ -1,5 +1,5 @@
-defmodule SciData.MNIST do
-  alias SciData.Utils
+defmodule Scidata.MNIST do
+  alias Scidata.Utils
 
   @default_data_path "tmp/mnist"
   @base_url 'https://storage.googleapis.com/cvdf-datasets/mnist/'

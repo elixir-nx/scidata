@@ -1,4 +1,4 @@
-defmodule SciData.Utils do
+defmodule Scidata.Utils do
   @moduledoc false
   require Logger
 

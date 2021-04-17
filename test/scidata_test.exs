@@ -1,4 +1,4 @@
-defmodule SciDataTest do
+defmodule ScidataTest do
   use ExUnit.Case
-  doctest SciData.MNIST
+  doctest Scidata.MNIST
 end

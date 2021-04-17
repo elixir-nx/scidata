@@ -1,5 +1,5 @@
-defmodule SciData.FashionMNIST do
-  alias SciData.Utils
+defmodule Scidata.FashionMNIST do
+  alias Scidata.Utils
 
   @default_data_path "tmp/fashionmnist"
   @base_url 'http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/'
@@ -44,7 +44,7 @@ defmodule SciData.FashionMNIST do
       dataset labels
 
   Examples:
-    iex> SciData.FashionMNIST.download()
+    iex> Scidata.FashionMNIST.download()
     Fetching train-images-idx3-ubyte.gz from http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/
 
     Fetching train-labels-idx1-ubyte.gz from http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/
@@ -64,7 +64,7 @@ defmodule SciData.FashionMNIST do
     iex>             |> Nx.to_batched_list(32)
     iex>         end
     #Function<7.126501267/1 in :erl_eval.expr/5>
-    iex> SciData.FashionMNIST.download(transform_labels: transform_labels)
+    iex> Scidata.FashionMNIST.download(transform_labels: transform_labels)
     Using train-images-idx3-ubyte.gz from tmp/fashionmnist
 
     Using train-labels-idx1-ubyte.gz from tmp/fashionmnist

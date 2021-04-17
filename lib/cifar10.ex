@@ -1,5 +1,5 @@
-defmodule SciData.CIFAR10 do
-  alias SciData.Utils
+defmodule Scidata.CIFAR10 do
+  alias Scidata.Utils
 
   @default_data_path "tmp/cifar10"
   @base_url 'https://www.cs.toronto.edu/~kriz/'
@@ -32,7 +32,7 @@ defmodule SciData.CIFAR10 do
       dataset labels
 
   Examples:
-    iex> SciData.CIFAR10.download()
+    iex> Scidata.CIFAR10.download()
     Fetching cifar-10-binary.tar.gz from https://www.cs.toronto.edu/~kriz/
 
     {{<<59, 43, 50, 68, 98, 119, 139, 145, 149, 149, 131, 125, 142, 144, 137, 129,

@@ -52,7 +52,7 @@ defmodule Scidata.FashionMNIST do
       dataset labels
 
   * `:test_set` - indicate whether the training set or the test set
-        should be fetched
+      should be fetched
 
   ## Examples
 

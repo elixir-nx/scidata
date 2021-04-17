@@ -53,7 +53,7 @@ defmodule Scidata.MNIST do
       dataset labels
 
     * `:test_set` - indicate whether the training set or the test set
-        should be fetched
+      should be fetched
   """
   def download(opts \\ []),
     do: {download_images(opts), download_labels(opts)}

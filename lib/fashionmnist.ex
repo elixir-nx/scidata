@@ -28,11 +28,14 @@ defmodule Scidata.FashionMNIST do
 
   @doc """
   Downloads the FashionMNIST dataset or fetches it locally.
+
   ## Options
-  * `datapath` - path where the dataset .gz should be stored locally
-  * `transform_images/1` - accepts accept a tuple like
+
+    * `:datapath` - path where the dataset .gz should be stored locally
+    * `:transform_images` - accepts accept a tuple like
       `{binary_data, tensor_type, data_shape}` which can be used for
       converting the `binary_data` to a tensor with a function like
+
           fn {labels_binary, type, _shape} ->
             labels_binary
             |> Nx.from_binary(type)
@@ -40,48 +43,20 @@ defmodule Scidata.FashionMNIST do
             |> Nx.equal(Nx.tensor(Enum.to_list(0..9)))
             |> Nx.to_batched_list(32)
           end
-  * `transform_labels/1` - similar to `transform_images/1` but applied to
+
+  * `:transform_labels` - similar to `:transform_images` but applied to
       dataset labels
 
-  Examples:
-    iex> Scidata.FashionMNIST.download()
-    Fetching train-images-idx3-ubyte.gz from http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/
+  ## Examples
 
-    Fetching train-labels-idx1-ubyte.gz from http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/
+      iex> Scidata.FashionMNIST.download()
+      {{<<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...>>,
+        {:u, 8}, {60000, 28, 28}},
+      {<<9, 0, 0, 3, 0, 2, 7, 2, 5, 5, 0, 9, 5, 5, 7, 9, 1, 0, 6, 4, 3, 1, 4, 8, 4,
+          3, 0, 2, 4, 4, 5, 3, 6, 6, 0, 8, 5, 2, 1, 6, 6, 7, 9, 5, 9, 2, 7, ...>>,
+        {:u, 8}, {60000}}}
 
-    {{<<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...>>,
-      {:u, 8}, {60000, 28, 28}},
-    {<<9, 0, 0, 3, 0, 2, 7, 2, 5, 5, 0, 9, 5, 5, 7, 9, 1, 0, 6, 4, 3, 1, 4, 8, 4,
-        3, 0, 2, 4, 4, 5, 3, 6, 6, 0, 8, 5, 2, 1, 6, 6, 7, 9, 5, 9, 2, 7, ...>>,
-      {:u, 8}, {60000}}}
-
-    iex> transform_labels = fn {labels_binary, type, _shape} ->
-    iex>             labels_binary
-    iex>             |> Nx.from_binary(type)
-    iex>             |> Nx.new_axis(-1)
-    iex>             |> Nx.equal(Nx.tensor(Enum.to_list(0..9)))
-    iex>             |> Nx.to_batched_list(32)
-    iex>         end
-    #Function<7.126501267/1 in :erl_eval.expr/5>
-    iex> Scidata.FashionMNIST.download(transform_labels: transform_labels)
-    Using train-images-idx3-ubyte.gz from tmp/fashionmnist
-
-    Using train-labels-idx1-ubyte.gz from tmp/fashionmnist
-
-    {{<<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...>>,
-    {:u, 8}, {60000, 28, 28}}, #Nx.Tensor<
-    u8[60000][10]
-    [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-      [1, 0, 0, 0, 0, 0, 0, 0, ...],
-      ...
-    ]
-    >}
   """
   def download(opts \\ []),
     do: {download_images(opts), download_labels(opts)}

@@ -2,7 +2,11 @@
 
 ## Usage
 
-We currently support MNIST, FashionMNIST, and CIFAR10 training datasets.
+Currently Scidata supports the following training datasets:
+
+- MNIST
+- FashionMNIST
+- CIFAR10
 
 Download or fetch datasets locally:
 

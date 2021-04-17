@@ -23,4 +23,11 @@ defmodule Scidata.Utils do
 
     :zlib.gunzip(data)
   end
+
+  defmacro get_download_args(opts) do
+    quote bind_quoted: [opts: opts] do
+      {opts[:data_path] || @default_data_path, opts[:transform_images] || fn out -> out end,
+       opts[:transform_labels] || fn out -> out end}
+    end
+  end
 end

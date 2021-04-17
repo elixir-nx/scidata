@@ -1,5 +1,6 @@
 defmodule Scidata.MNIST do
   alias Scidata.Utils
+  require Scidata.Utils
 
   @default_data_path "tmp/mnist"
   @base_url 'https://storage.googleapis.com/cvdf-datasets/mnist/'
@@ -8,22 +9,14 @@ defmodule Scidata.MNIST do
   @test_image_file 't10k-images-idx3-ubyte.gz'
   @test_label_file 't10k-labels-idx1-ubyte.gz'
 
-  defp download_images(opts) do
-    data_path = opts[:data_path] || @default_data_path
-    transform = opts[:transform_images] || fn out -> out end
-    image_file = if(opts[:test_set], do: @test_image_file, else: @train_image_file)
-
+  defp download_images(image_file, data_path, transform) do
     <<_::32, n_images::32, n_rows::32, n_cols::32, images::binary>> =
       Utils.unzip_cache_or_download(@base_url, image_file, data_path)
 
     transform.({images, {:u, 8}, {n_images, n_rows, n_cols}})
   end
 
-  defp download_labels(opts) do
-    data_path = opts[:data_path] || @default_data_path
-    transform = opts[:transform_labels] || fn out -> out end
-    label_file = if(opts[:test_set], do: @test_label_file, else: @train_label_file)
-
+  defp download_labels(label_file, data_path, transform) do
     <<_::32, n_labels::32, labels::binary>> =
       Utils.unzip_cache_or_download(@base_url, label_file, data_path)
 
@@ -31,7 +24,7 @@ defmodule Scidata.MNIST do
   end
 
   @doc """
-  Downloads the MNIST dataset or fetches it locally.
+  Downloads the MNIST training dataset or fetches it locally.
 
   ## Options
 
@@ -55,6 +48,22 @@ defmodule Scidata.MNIST do
     * `:test_set` - indicate whether the training set or the test set
       should be fetched
   """
-  def download(opts \\ []),
-    do: {download_images(opts), download_labels(opts)}
+  def download(opts \\ []) do
+    {data_path, transform_images, transform_labels} = Utils.get_download_args(opts)
+
+    {download_images(@train_image_file, data_path, transform_images),
+     download_labels(@train_label_file, data_path, transform_labels)}
+  end
+
+  @doc """
+  Downloads the MNIST test dataset or fetches it locally.
+
+  Accepts the same options as `download/1`.
+  """
+  def download_test(opts \\ []) do
+    {data_path, transform_images, transform_labels} = Utils.get_download_args(opts)
+
+    {download_images(@test_image_file, data_path, transform_images),
+     download_labels(@test_label_file, data_path, transform_labels)}
+  end
 end

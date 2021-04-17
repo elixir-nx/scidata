@@ -1,4 +1,5 @@
 defmodule Scidata.CIFAR10 do
+  require Scidata.Utils
   alias Scidata.Utils
 
   @default_data_path "tmp/cifar10"
@@ -18,8 +19,40 @@ defmodule Scidata.CIFAR10 do
     end
   end
 
+  defp download_dataset(dataset_type, data_path, transform_images, transform_labels) do
+    gz = Utils.unzip_cache_or_download(@base_url, @dataset_file, data_path)
+
+    with {:ok, files} <- :erl_tar.extract({:binary, gz}, [:memory, :compressed]) do
+      {imgs, labels} =
+        files
+        |> Enum.filter(fn {fname, _} ->
+          String.match?(
+            List.to_string(fname),
+            case dataset_type do
+              :train -> ~r/data_batch/
+              :test -> ~r/test_batch/
+            end
+          )
+        end)
+        |> Enum.map(fn {_, content} -> Task.async(fn -> parse_images(content) end) end)
+        |> Enum.map(&Task.await(&1, :infinity))
+        |> Enum.reduce({<<>>, <<>>}, fn {image, label}, {image_acc, label_acc} ->
+          {image_acc <> image, label_acc <> label}
+        end)
+
+      {transform_images.(
+         {imgs, {:u, 8},
+          if(dataset_type == :test, do: @test_images_shape, else: @train_images_shape)}
+       ),
+       transform_labels.(
+         {labels, {:u, 8},
+          if(dataset_type == :test, do: @test_labels_shape, else: @train_labels_shape)}
+       )}
+    end
+  end
+
   @doc """
-  Downloads the CIFAR10 dataset or fetches it locally.
+  Downloads the CIFAR10 training dataset or fetches it locally.
 
   ## Options
 
@@ -56,37 +89,19 @@ defmodule Scidata.CIFAR10 do
 
   """
   def download(opts \\ []) do
-    data_path = opts[:data_path] || @default_data_path
-    transform_images = opts[:transform_images] || fn out -> out end
-    transform_labels = opts[:transform_labels] || fn out -> out end
+    {data_path, transform_images, transform_labels} = Utils.get_download_args(opts)
 
-    gz = Utils.unzip_cache_or_download(@base_url, @dataset_file, data_path)
+    download_dataset(:train, data_path, transform_images, transform_labels)
+  end
 
-    with {:ok, files} <- :erl_tar.extract({:binary, gz}, [:memory, :compressed]) do
-      {imgs, labels} =
-        files
-        |> Enum.filter(fn {fname, _} ->
-          String.match?(
-            List.to_string(fname),
-            if opts[:test_set] do
-              ~r/test_batch/
-            else
-              ~r/data_batch/
-            end
-          )
-        end)
-        |> Enum.map(fn {_, content} -> Task.async(fn -> parse_images(content) end) end)
-        |> Enum.map(&Task.await(&1, :infinity))
-        |> Enum.reduce({<<>>, <<>>}, fn {image, label}, {image_acc, label_acc} ->
-          {image_acc <> image, label_acc <> label}
-        end)
+  @doc """
+  Downloads the CIFAR10 test dataset or fetches it locally.
 
-      {transform_images.(
-         {imgs, {:u, 8}, if(opts[:test_set], do: @test_images_shape, else: @train_images_shape)}
-       ),
-       transform_labels.(
-         {labels, {:u, 8}, if(opts[:test_set], do: @test_labels_shape, else: @train_labels_shape)}
-       )}
-    end
+  Accepts the same options as `download/1`.
+  """
+  def download_test(opts \\ []) do
+    {data_path, transform_images, transform_labels} = Utils.get_download_args(opts)
+
+    download_dataset(:test, data_path, transform_images, transform_labels)
   end
 end

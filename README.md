@@ -2,7 +2,11 @@
 
 ## Usage
 
-We currently support MNIST, FashionMNIST, and CIFAR10 training and test datasets.
+Currently we support the following training and test datasets:
+
+  * MNIST
+  * FashionMNIST
+  * CIFAR10
 
 Download or fetch datasets locally:
 
@@ -42,7 +46,6 @@ end
     transform_images: transform_images,
     transform_labels: transform_labels
   )
-
 ```
 
 ## Installation

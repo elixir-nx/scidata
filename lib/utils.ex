@@ -1,33 +1,93 @@
 defmodule Scidata.Utils do
   @moduledoc false
-  require Logger
 
-  def unzip_cache_or_download(base_url, zip, data_path) do
-    path = Path.join(data_path, zip)
+  def get!(url) do
+    request = %{
+      url: url,
+      headers: []
+    }
 
-    data =
-      if File.exists?(path) do
-        Logger.debug("Using #{zip} from #{data_path}\n")
-        File.read!(path)
-      else
-        Logger.debug("Fetching #{zip} from #{base_url}\n")
-        :inets.start()
-        :ssl.start()
-
-        {:ok, {_status, _response, data}} = :httpc.request(base_url ++ zip)
-        File.mkdir_p!(data_path)
-        File.write!(path, data)
-
-        data
-      end
-
-    :zlib.gunzip(data)
+    request
+    |> if_modified_since()
+    |> run!()
+    |> raise_errors()
+    |> handle_cache()
+    |> decode()
+    |> elem(1)
   end
 
-  defmacro get_download_args(opts) do
-    quote bind_quoted: [opts: opts] do
-      {opts[:data_path] || @default_data_path, opts[:transform_images] || fn out -> out end,
-       opts[:transform_labels] || fn out -> out end}
+  defp if_modified_since(request) do
+    case File.stat(cache_path(request)) do
+      {:ok, stat} ->
+        value = stat.mtime |> NaiveDateTime.from_erl!() |> format_http_datetime()
+        update_in(request.headers, &[{'if-modified-since', String.to_charlist(value)} | &1])
+
+      _ ->
+        request
     end
+  end
+
+  defp format_http_datetime(datetime) do
+    Calendar.strftime(datetime, "%a, %d %b %Y %H:%m:%S GMT")
+  end
+
+  defp run!(request) do
+    http_opts = []
+    opts = [body_format: :binary]
+    arg = {request.url, request.headers}
+
+    case :httpc.request(:get, arg, http_opts, opts) do
+      {:ok, {{_, status, _}, headers, body}} ->
+        response = %{status: status, headers: headers, body: body}
+        {request, response}
+
+      {:error, reason} ->
+        raise inspect(reason)
+    end
+  end
+
+  defp raise_errors({request, response}) do
+    if response.status >= 400 do
+      raise "HTTP #{response.status} #{inspect(response.body)}"
+    else
+      {request, response}
+    end
+  end
+
+  defp decode({request, response}) do
+    cond do
+      String.ends_with?(request.url, ".tar.gz") ->
+        {:ok, files} = :erl_tar.extract({:binary, response.body}, [:memory, :compressed])
+        response = %{response | body: files}
+        {request, response}
+
+      Path.extname(request.url) == ".gz" ->
+        body = :zlib.gunzip(response.body)
+        response = %{response | body: body}
+        {request, response}
+
+      true ->
+        {request, response}
+    end
+  end
+
+  defp handle_cache({request, response}) do
+    path = cache_path(request)
+
+    if response.status == 304 do
+      # Logger.debug(["loading cached ", path])
+      response = %{response | body: File.read!(path)}
+      {request, response}
+    else
+      # Logger.debug(["writing cache ", path])
+      File.write!(path, response.body)
+      {request, response}
+    end
+  end
+
+  defp cache_path(request) do
+    uri = URI.parse(request.url)
+    path = Enum.join([uri.host, String.replace(uri.path, "/", "-")], "-")
+    Path.join(System.tmp_dir!(), path)
   end
 end

@@ -9,48 +9,6 @@ defmodule Scidata.CIFAR10 do
   @test_images_shape {10000, 3, 32, 32}
   @test_labels_shape {10000}
 
-  defp parse_images(content) do
-    for <<example::size(3073)-binary <- content>>, reduce: {<<>>, <<>>} do
-      {images, labels} ->
-        <<label::size(8)-bitstring, image::size(3072)-binary>> = example
-
-        {images <> image, labels <> label}
-    end
-  end
-
-  defp download_dataset(dataset_type, opts) do
-    transform_images = opts[:transform_images] || (& &1)
-    transform_labels = opts[:transform_labels] || (& &1)
-
-    files = Utils.get!(@base_url <> @dataset_file).body
-
-    {imgs, labels} =
-      files
-      |> Enum.filter(fn {fname, _} ->
-        String.match?(
-          List.to_string(fname),
-          case dataset_type do
-            :train -> ~r/data_batch/
-            :test -> ~r/test_batch/
-          end
-        )
-      end)
-      |> Enum.map(fn {_, content} -> Task.async(fn -> parse_images(content) end) end)
-      |> Enum.map(&Task.await(&1, :infinity))
-      |> Enum.reduce({<<>>, <<>>}, fn {image, label}, {image_acc, label_acc} ->
-        {image_acc <> image, label_acc <> label}
-      end)
-
-    {transform_images.(
-       {imgs, {:u, 8},
-        if(dataset_type == :test, do: @test_images_shape, else: @train_images_shape)}
-     ),
-     transform_labels.(
-       {labels, {:u, 8},
-        if(dataset_type == :test, do: @test_labels_shape, else: @train_labels_shape)}
-     )}
-  end
-
   @doc """
   Downloads the CIFAR10 training dataset or fetches it locally.
 
@@ -97,5 +55,47 @@ defmodule Scidata.CIFAR10 do
   """
   def download_test(opts \\ []) do
     download_dataset(:test, opts)
+  end
+
+  defp parse_images(content) do
+    for <<example::size(3073)-binary <- content>>, reduce: {<<>>, <<>>} do
+      {images, labels} ->
+        <<label::size(8)-bitstring, image::size(3072)-binary>> = example
+
+        {images <> image, labels <> label}
+    end
+  end
+
+  defp download_dataset(dataset_type, opts) do
+    transform_images = opts[:transform_images] || (& &1)
+    transform_labels = opts[:transform_labels] || (& &1)
+
+    files = Utils.get!(@base_url <> @dataset_file).body
+
+    {imgs, labels} =
+      files
+      |> Enum.filter(fn {fname, _} ->
+        String.match?(
+          List.to_string(fname),
+          case dataset_type do
+            :train -> ~r/data_batch/
+            :test -> ~r/test_batch/
+          end
+        )
+      end)
+      |> Enum.map(fn {_, content} -> Task.async(fn -> parse_images(content) end) end)
+      |> Enum.map(&Task.await(&1, :infinity))
+      |> Enum.reduce({<<>>, <<>>}, fn {image, label}, {image_acc, label_acc} ->
+        {image_acc <> image, label_acc <> label}
+      end)
+
+    {transform_images.(
+       {imgs, {:u, 8},
+        if(dataset_type == :test, do: @test_images_shape, else: @train_images_shape)}
+     ),
+     transform_labels.(
+       {labels, {:u, 8},
+        if(dataset_type == :test, do: @test_labels_shape, else: @train_labels_shape)}
+     )}
   end
 end

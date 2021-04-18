@@ -7,20 +7,6 @@ defmodule Scidata.MNIST do
   @test_image_file "t10k-images-idx3-ubyte.gz"
   @test_label_file "t10k-labels-idx1-ubyte.gz"
 
-  defp download_images(image_file, transform) do
-    data = Utils.get!(@base_url <> image_file).body
-    <<_::32, n_images::32, n_rows::32, n_cols::32, images::binary>> = data
-
-    transform.({images, {:u, 8}, {n_images, n_rows, n_cols}})
-  end
-
-  defp download_labels(label_file, transform) do
-    data = Utils.get!(@base_url <> label_file).body
-    <<_::32, n_labels::32, labels::binary>> = data
-
-    transform.({labels, {:u, 8}, {n_labels}})
-  end
-
   @doc """
   Downloads the MNIST training dataset or fetches it locally.
 
@@ -66,5 +52,19 @@ defmodule Scidata.MNIST do
 
     {download_images(@test_image_file, transform_images),
      download_labels(@test_label_file, transform_labels)}
+  end
+
+  defp download_images(image_file, transform) do
+    data = Utils.get!(@base_url <> image_file).body
+    <<_::32, n_images::32, n_rows::32, n_cols::32, images::binary>> = data
+
+    transform.({images, {:u, 8}, {n_images, n_rows, n_cols}})
+  end
+
+  defp download_labels(label_file, transform) do
+    data = Utils.get!(@base_url <> label_file).body
+    <<_::32, n_labels::32, labels::binary>> = data
+
+    transform.({labels, {:u, 8}, {n_labels}})
   end
 end

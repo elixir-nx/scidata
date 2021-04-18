@@ -4,15 +4,15 @@
 
 Currently we support the following training and test datasets:
 
-  * MNIST
-  * FashionMNIST
-  * CIFAR10
+- MNIST
+- FashionMNIST
+- CIFAR10
 
 Download or fetch datasets locally:
 
 ```elixir
 {train_images, train_labels} = Scidata.MNIST.download()
-{test_images, test_labels} = Scidata.MNIST.download(test_set: true)
+{test_images, test_labels} = Scidata.MNIST.download_test()
 
 # Unpack train_images like...
 {images_binary, tensor_type, shape} = train_images

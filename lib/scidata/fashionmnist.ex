@@ -1,4 +1,8 @@
 defmodule Scidata.FashionMNIST do
+    @moduledoc """
+    Module for downloading the [FashionMNIST dataset](https://github.com/zalandoresearch/fashion-mnist#readme).
+    """
+
   require Scidata.Utils
   alias Scidata.Utils
 

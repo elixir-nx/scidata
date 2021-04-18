@@ -2,7 +2,7 @@
 
 ## Usage
 
-Currently we support the following training datasets:
+Currently we support the following training and test datasets:
 
   * MNIST
   * FashionMNIST

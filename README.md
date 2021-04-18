@@ -2,12 +2,13 @@
 
 ## Usage
 
-We currently support MNIST, FashionMNIST, and CIFAR10 training datasets.
+We currently support MNIST, FashionMNIST, and CIFAR10 training and test datasets.
 
 Download or fetch datasets locally:
 
 ```elixir
 {train_images, train_labels} = Scidata.MNIST.download()
+{test_images, test_labels} = Scidata.MNIST.download(test_set: true)
 
 # Unpack train_images like...
 {images_binary, tensor_type, shape} = train_images
@@ -56,7 +57,7 @@ end
 
 ## License
 
-Copyright (c) 2021 t-rutten
+Copyright (c) 2021 Tom Rutten
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

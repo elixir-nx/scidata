@@ -2,7 +2,7 @@
 
 ## Usage
 
-Currently we support the following training and test datasets:
+Scidata currently supports the following training and test datasets:
 
 - MNIST
 - FashionMNIST
@@ -53,7 +53,7 @@ end
 ```elixir
 def deps do
   [
-    {:scidata, "~> 0.1.0-dev", github: "elixir-nx/scidata"}
+    {:scidata, "~> 0.1.0"}
   ]
 end
 ```

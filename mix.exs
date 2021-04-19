@@ -44,7 +44,6 @@ defmodule Scidata.MixProject do
 
   defp docs do
     [
-      main: "Scidata",
       source_ref: "v#{@version}",
       source_url: @repo_url
     ]

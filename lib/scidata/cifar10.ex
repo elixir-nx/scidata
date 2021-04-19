@@ -53,6 +53,48 @@ defmodule Scidata.CIFAR10 do
   end
 
   @doc """
+  Shows names of labels of the dataset.
+
+  Label values returned by `download/1` correspond to indices in the lists
+  returned here.
+
+  ## Examples
+      iex> transform_labels = fn {b, t, _} -> b |> Nx.from_binary(t) end
+      iex> {_, labels} = Scidata.CIFAR10.download(transform_labels: transform_labels)
+      {{<<59, 43, 50, 68, 98, 119, 139, 145, 149, 149, 131, 125, 142, 144, 137, 129,
+          137, 134, 124, 139, 139, 133, 136, 139, 152, 163, 168, 159, 158, 158, 152,
+          148, 16, 0, 18, 51, 88, 120, 128, 127, 126, 116, 106, 101, 105, 113, 109,
+          112, ...>>, {:u, 8}, {50000, 3, 32, 32}},
+       {<<6, 9, 9, 4, 1, 1, 2, 7, 8, 3, 4, 7, 7, 2, 9, 9, 9, 3, 2, 6, 4, 3, 6, 6, 2,
+          6, 3, 5, 4, 0, 0, 9, 1, 3, 4, 0, 3, 7, 3, 3, 5, 2, 2, 7, 1, 1, 1, ...>>,
+        {:u, 8}, {50000}}}
+      iex> label_names = Scidata.CIFAR10.labels_info()
+      ["airplane", "automobile", "bird", "cat", "deer", "dog", "frog", "horse",
+       "ship", "truck"]
+      iex> labels |> Nx.to_flat_list() |> Enum.map(fn label_index -> Enum.at(label_names, label_index) end)
+      ["frog", "truck", "truck", "deer", "automobile", "automobile", "bird", "horse",
+       "ship", "cat", "deer", "horse", "horse", "bird", "truck", "truck", "truck", ...]
+
+
+
+
+  """
+  def labels_info() do
+    files = Utils.get!(@base_url <> @dataset_file).body
+
+    labels =
+      files
+      |> Enum.find(fn {fname, _} ->
+        String.match?(List.to_string(fname), ~r/batches.meta/)
+      end)
+      |> elem(1)
+      |> String.trim_trailing()
+      |> String.split("\n")
+
+    labels
+  end
+
+  @doc """
   Downloads the CIFAR10 test dataset or fetches it locally.
 
   Accepts the same options as `download/1`.

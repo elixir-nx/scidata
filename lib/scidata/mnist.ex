@@ -1,4 +1,8 @@
 defmodule Scidata.MNIST do
+  @moduledoc """
+  Module for downloading the [MNIST dataset](http://yann.lecun.com/exdb/mnist/).
+  """
+
   alias Scidata.Utils
 
   @base_url "https://storage.googleapis.com/cvdf-datasets/mnist/"
@@ -11,8 +15,6 @@ defmodule Scidata.MNIST do
   Downloads the MNIST training dataset or fetches it locally.
 
   ## Options
-
-    * `:datapath` - path where the dataset .gz should be stored locally
 
     * `:transform_images` - A function that transforms images, defaults to
       `& &1`.

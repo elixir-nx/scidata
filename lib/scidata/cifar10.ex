@@ -1,4 +1,8 @@
 defmodule Scidata.CIFAR10 do
+  @moduledoc """
+  Module for downloading the [CIFAR10 dataset](https://www.cs.toronto.edu/~kriz/cifar.html).
+  """
+
   require Scidata.Utils
   alias Scidata.Utils
 

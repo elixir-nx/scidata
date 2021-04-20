@@ -59,6 +59,7 @@ defmodule Scidata.CIFAR10 do
   returned here.
 
   ## Examples
+
       iex> transform_labels = fn {b, t, _} -> b |> Nx.from_binary(t) end
       iex> {_, labels} = Scidata.CIFAR10.download(transform_labels: transform_labels)
       {{<<59, 43, 50, 68, 98, 119, 139, 145, 149, 149, 131, 125, 142, 144, 137, 129,

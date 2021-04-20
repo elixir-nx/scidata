@@ -75,9 +75,6 @@ defmodule Scidata.CIFAR10 do
       ["frog", "truck", "truck", "deer", "automobile", "automobile", "bird", "horse",
        "ship", "cat", "deer", "horse", "horse", "bird", "truck", "truck", "truck", ...]
 
-
-
-
   """
   def labels_info() do
     files = Utils.get!(@base_url <> @dataset_file).body

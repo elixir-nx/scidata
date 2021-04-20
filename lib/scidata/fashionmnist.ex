@@ -75,6 +75,7 @@ defmodule Scidata.FashionMNIST do
   Shows descriptions of dataset labels.
 
   ## Examples
+
       iex> transform_labels = fn {b, t, _} -> b |> Nx.from_binary(t) end
       iex> {_, labels} = Scidata.FashionMNIST.download(transform_labels: transform_labels)
       {{<<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

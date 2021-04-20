@@ -53,7 +53,7 @@ defmodule Scidata.CIFAR10 do
   end
 
   @doc """
-  Shows names of labels of the dataset.
+  Shows descriptions of dataset labels.
 
   Label values returned by `download/1` correspond to indices in the lists
   returned here.

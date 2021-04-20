@@ -11,6 +11,8 @@ defmodule Scidata.FashionMNIST do
   @train_label_file "train-labels-idx1-ubyte.gz"
   @test_image_file "t10k-images-idx3-ubyte.gz"
   @test_label_file "t10k-labels-idx1-ubyte.gz"
+  @label_descriptions ~w(t_shirt/top trouser pullover dress coat sandal shirt
+                         sneaker bag ankle_boot)
 
   @doc """
   Downloads the FashionMNIST training dataset or fetches it locally.
@@ -68,6 +70,28 @@ defmodule Scidata.FashionMNIST do
     {download_images(@test_image_file, transform_images),
      download_labels(@test_label_file, transform_labels)}
   end
+
+  @doc """
+  Shows descriptions of dataset labels.
+
+  ## Examples
+      iex> transform_labels = fn {b, t, _} -> b |> Nx.from_binary(t) end
+      iex> {_, labels} = Scidata.FashionMNIST.download(transform_labels: transform_labels)
+      {{<<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...>>,
+        {:u, 8}, {60000, 28, 28}}, #Nx.Tensor<
+         u8[60000]
+         [9, 0, 0, 3, 0, 2, 7, 2, 5, 5, 0, 9, 5, 5, 7, 9, 1, 0, 6, 4, 3, 1, 4, 8, 4, 3, 0, 2,
+          4, 4, 5, 3, 6, 6, 0, 8, 5, 2, 1, 6, 6, 7, 9, 5, 9, 2, 7, 3, ...]
+      >}
+      iex> label_names = Scidata.FashionMNIST.labels_info()
+      ["t_shirt/top", "trouser", "pullover", "dress", "coat", "sandal", "shirt",
+       "sneaker", "bag", "ankle_boot"]
+      iex> labels |> Nx.to_flat_list() |> Enum.map(fn label_index -> Enum.at(label_names, label_index) end)
+      ["ankle_boot", "t_shirt/top", "t_shirt/top", "dress", "t_shirt/top", "pullover",
+       "sneaker", "pullover", "sandal", "sandal", "t_shirt/top", "ankle_boot", ...]
+  """
+  def labels_info(), do: @label_descriptions
 
   defp download_images(image_file, transform) do
     data = Utils.get!(@base_url <> image_file).body

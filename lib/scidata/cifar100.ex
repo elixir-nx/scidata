@@ -62,7 +62,7 @@ defmodule Scidata.CIFAR100 do
   end
 
   @doc """
-  Shows names of coarse and fine labels of the dataset.
+  Shows descriptions of coarse and fine labels of the dataset.
 
   Label values returned by `download/1` correspond to indices in the lists
   returned here.

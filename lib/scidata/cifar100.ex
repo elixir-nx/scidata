@@ -69,15 +69,7 @@ defmodule Scidata.CIFAR100 do
 
   ## Examples
 
-      iex> {_, labels} = Scidata.CIFAR100.download()
-      {{<<255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-          255, 255, 255, 231, 176, 237, 255, 255, 255, 255, 255, 252, 242, 229, 195,
-          212, 182, 255, 254, 254, 254, 254, 254, 254, 254, 254, 254, 254, 254, 254,
-          254, 254, 254, ...>>, {:u, 8}, {50000, 3, 32, 32}},
-      {<<11, 19, 15, 29, 4, 0, 14, 11, 1, 1, 5, 86, 18, 90, 3, 28, 10, 23, 11, 31, 5,
-          39, 17, 96, 2, 82, 9, 17, 10, 71, 5, 39, 18, 8, 8, 97, 16, 80, 10, 71, 16,
-          74, 17, 59, 2, 70, 5, ...>>, {:u, 8}, {50000, 2}}}
-      iex> {coarse_class_names, fine_class_names} = Scidata.CIFAR100.labels_info()
+      iex> {_coarse_class_names, _fine_class_names} = Scidata.CIFAR100.labels_info()
       {["aquatic_mammals", "fish", "flowers", "food_containers",
         "fruit_and_vegetables", "household_electrical_devices", "household_furniture",
         "insects", "large_carnivores", "large_man-made_outdoor_things",
@@ -91,44 +83,6 @@ defmodule Scidata.CIFAR100 do
         "dolphin", "elephant", "flatfish", "forest", "fox", "girl", "hamster",
         "house", "kangaroo", "keyboard", "lamp", "lawn_mower", "leopard", "lion",
         "lizard", "lobster", "man", "maple_tree", ...]}
-      iex> {labels_bin, labels_type, labels_shape} = labels
-      {<<11, 19, 15, 29, 4, 0, 14, 11, 1, 1, 5, 86, 18, 90, 3, 28, 10, 23, 11, 31, 5,
-         39, 17, 96, 2, 82, 9, 17, 10, 71, 5, 39, 18, 8, 8, 97, 16, 80, 10, 71, 16,
-         74, 17, 59, 2, 70, 5, 87, 17, ...>>, {:u, 8}, {50000, 2}}
-      iex> labels_tensor = labels_bin |> Nx.from_binary(labels_type) |> Nx.reshape(labels_shape)
-      #Nx.Tensor<
-        u8[50000][2]
-        [
-          [11, 19],
-          [15, 29],
-          [4, 0],
-          [14, 11],
-          [1, 1],
-          ...
-        ]
-      >
-      iex> coarse_labels = labels_tensor |> Nx.slice([0,0], [50000, 1]) \
-      |> Nx.reshape({50000}) |> Nx.to_flat_list() \
-      |> Enum.map(fn label_index -> Enum.at(coarse, label_index) end)
-      ["large_omnivores_and_herbivores", "reptiles", "fruit_and_vegetables", "people",
-      "fish", "household_electrical_devices", "vehicles_1", "food_containers",
-      "large_natural_outdoor_scenes", "large_omnivores_and_herbivores", ...]
-      iex> fine_labels = labels_tensor |> Nx.slice([0,1], [50000, 1]) \
-      |> Nx.reshape({50000}) |> Nx.to_flat_list \
-      |> Enum.map(fn label_index -> Enum.at(fine, label_index) end)
-      ["cattle", "dinosaur", "apple", "boy", "aquarium_fish", "telephone", "train",
-      "cup", "cloud", "elephant", "keyboard", "willow_tree", "sunflower", "castle", ...]
-      iex> Enum.zip(coarse_labels, fine_labels)
-      [
-        {"large_omnivores_and_herbivores", "cattle"},
-        {"reptiles", "dinosaur"},
-        {"fruit_and_vegetables", "apple"},
-        {"people", "boy"},
-        {"fish", "aquarium_fish"},
-        {"household_electrical_devices", "telephone"},
-        {"vehicles_1", "train"},
-        ...
-      ]
 
   """
   def labels_info() do

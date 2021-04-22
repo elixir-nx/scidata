@@ -53,7 +53,7 @@ end
 ```elixir
 def deps do
   [
-    {:scidata, "~> 0.1.0"}
+    {:scidata, "~> 0.1.1"}
   ]
 end
 ```

@@ -4,48 +4,51 @@ defmodule Scidata.IMDBReviews do
 
   alias Scidata.Utils
 
-  def download(opts \\ []) do
-    download_dataset(:train, opts)
+  def download(
+        example_types \\ [:pos, :neg],
+        opts \\ []
+      ) do
+    download_dataset(example_types, :train, opts)
   end
 
-  def download_test(opts \\ []) do
-    download_dataset(:test, opts)
+  def download_test(
+        example_types \\ [:pos, :neg],
+        opts \\ []
+      ) do
+    download_dataset(example_types, :test, opts)
   end
 
-  defp download_dataset(dataset_type, opts) do
+  defp download_dataset(example_types, dataset_type, opts) do
     transform_inputs = opts[:transform_inputs] || (& &1)
     transform_labels = opts[:transform_labels] || (& &1)
 
     files = Utils.get!(@base_url <> @dataset_file).body
 
-    pos_files =
-      Enum.filter(files, fn {fname, _} ->
-        file_match?(fname, dataset_type, :pos)
-      end)
-
-    neg_files =
-      Enum.filter(files, fn {fname, _} ->
-        file_match?(fname, dataset_type, :neg)
-      end)
-
-    :rand.seed(:exsss, {101, 102, 103})
-
     {inputs, labels} =
-      pos_files
-      |> Enum.zip(Stream.repeatedly(fn -> 1 end))
-      |> Enum.concat(Enum.zip(neg_files, Stream.repeatedly(fn -> 0 end)))
-      |> Enum.shuffle()
+      files
+      |> Enum.filter(fn {fname, _} ->
+        file_match?(fname, dataset_type, example_types)
+      end)
       |> Enum.reduce(
         {[], []},
-        fn {{_fname, contents}, label}, {inputs, labels} ->
-          {[contents | inputs], [label | labels]}
+        fn {fname, contents}, {inputs, labels} ->
+          {[contents | inputs], [get_label(fname) | labels]}
         end
       )
 
     {transform_inputs.(inputs), transform_labels.(labels)}
   end
 
-  defp file_match?(fname, dataset_type, label_type) do
-    String.match?(List.to_string(fname), ~r/#{dataset_type}\/#{label_type}/)
+  defp file_match?(fname, dataset_type, example_types) do
+    pattern = ~r/#{dataset_type}\/(#{Enum.join(example_types, "|")})\//
+    String.match?(List.to_string(fname), pattern)
+  end
+
+  defp get_label(fname) do
+    cond do
+      String.match?(List.to_string(fname), ~r/pos/) -> 1
+      String.match?(List.to_string(fname), ~r/neg/) -> 0
+      String.match?(List.to_string(fname), ~r/unsup/) -> nil
+    end
   end
 end

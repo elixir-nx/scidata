@@ -1,9 +1,20 @@
 defmodule Scidata.IMDBReviews do
+  @moduledoc """
+  Module for downloading the [Large Movie Review Dataset](https://ai.stanford.edu/~amaas/data/sentiment/).
+  """
+
   @base_url "http://ai.stanford.edu/~amaas/data/sentiment/"
   @dataset_file "aclImdb_v1.tar.gz"
 
   alias Scidata.Utils
 
+  @doc """
+  Downloads the IMDB reviews training dataset or fetches it locally.
+
+  `example_types` specifies which examples in the dataset should be returned
+  according to each example's label: `:pos` for positive examples, `:neg` for
+  negative examples, and `:unsup` for unlabeled examples.
+  """
   def download(
         example_types \\ [:pos, :neg],
         opts \\ []
@@ -11,6 +22,12 @@ defmodule Scidata.IMDBReviews do
     download_dataset(example_types, :train, opts)
   end
 
+  @doc """
+  Downloads the IMDB reviews test dataset or fetches it locally.
+
+  `example_types` is the same argument in `download/2` but excludes `:unsup`
+  because all unlabeled examples are in the training set.
+  """
   def download_test(
         example_types \\ [:pos, :neg],
         opts \\ []

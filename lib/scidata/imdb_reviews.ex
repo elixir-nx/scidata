@@ -42,16 +42,12 @@ defmodule Scidata.IMDBReviews do
     files = Utils.get!(@base_url <> @dataset_file).body
 
     {inputs, labels} =
-      files
-      |> Enum.filter(fn {fname, _} ->
-        file_match?(fname, dataset_type, example_types)
-      end)
-      |> Enum.reduce(
-        {[], []},
-        fn {fname, contents}, {inputs, labels} ->
+      for {fname, contents} <- files,
+          file_match?(fname, dataset_type, example_types),
+          reduce: {[], []} do
+        {inputs, labels} ->
           {[contents | inputs], [get_label(fname) | labels]}
-        end
-      )
+      end)
 
     {transform_inputs.(inputs), transform_labels.(labels)}
   end

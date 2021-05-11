@@ -47,7 +47,7 @@ defmodule Scidata.IMDBReviews do
           reduce: {[], []} do
         {inputs, labels} ->
           {[contents | inputs], [get_label(fname) | labels]}
-      end)
+      end
 
     {transform_inputs.(inputs), transform_labels.(labels)}
   end

@@ -73,7 +73,7 @@ defmodule Scidata.FashionMNIST do
     data = Utils.get!(@base_url <> image_file).body
     <<_::32, n_images::32, n_rows::32, n_cols::32, images::binary>> = data
 
-    transform.({images, {:u, 8}, {n_images, n_rows, n_cols}})
+    transform.({images, {:u, 8}, {n_images, 1, n_rows, n_cols}})
   end
 
   defp download_labels(label_file, transform) do

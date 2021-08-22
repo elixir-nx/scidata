@@ -59,6 +59,10 @@ def deps do
 end
 ```
 
+## Contributing
+
+PRs are encouraged! Consider using [utils](https://github.com/elixir-nx/scidata/blob/master/lib/scidata/utils.ex) to add your favorite dataset or one from [this list](https://github.com/elixir-nx/scidata/issues/16).
+
 ## License
 
 Copyright (c) 2021 Tom Rutten

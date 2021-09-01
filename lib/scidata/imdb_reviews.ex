@@ -8,11 +8,12 @@ defmodule Scidata.IMDBReviews do
 
   alias Scidata.Utils
 
-  @type sentiments :: [atom]
-  @type transform_type :: atom
-  @type transform_fn :: ([binary, ...] -> any)
-  @type transform_opt :: {transform_type, transform_fn}
-  @type opts :: [transform_opt]
+  @type train_sentiment :: :pos | :neg | :unsup
+  @type test_sentiment :: :pos | :neg
+  @type opts :: [
+          transform_inputs: ([binary, ...] -> any),
+          transform_labels: ([integer, ...] -> any)
+        ]
 
   @doc """
   Downloads the IMDB reviews training dataset or fetches it locally.
@@ -21,8 +22,7 @@ defmodule Scidata.IMDBReviews do
   according to each example's label: `:pos` for positive examples, `:neg` for
   negative examples, and `:unsup` for unlabeled examples.
   """
-  @spec download(sentiments, opts()) ::
-          %{review: any(), sentiment: any()}
+  @spec download([train_sentiment]) :: %{review: [binary(), ...], sentiment: 1 | -1}
   def download(
         example_types \\ [:pos, :neg],
         opts \\ []
@@ -36,8 +36,7 @@ defmodule Scidata.IMDBReviews do
   `example_types` is the same argument in `download/2` but excludes `:unsup`
   because all unlabeled examples are in the training set.
   """
-  @spec download_test(sentiments, opts()) ::
-          %{review: any(), sentiment: any()}
+  @spec download_test([test_sentiment]) :: %{review: [binary(), ...], sentiment: 1 | -1}
   def download_test(
         example_types \\ [:pos, :neg],
         opts \\ []

@@ -49,21 +49,17 @@ defmodule Scidata.IMDBReviews do
     transform_labels = opts[:transform_labels] || (& &1)
 
     files = Utils.get!(@base_url <> @dataset_file).body
+    regex = ~r"#{dataset_type}/(#{Enum.join(example_types, "|")})/"
 
     {inputs, labels} =
       for {fname, contents} <- files,
-          file_match?(fname, dataset_type, example_types),
+          List.to_string(fname) =~ regex,
           reduce: {[], []} do
         {inputs, labels} ->
           {[contents | inputs], [get_label(fname) | labels]}
       end
 
     %{review: transform_inputs.(inputs), sentiment: transform_labels.(labels)}
-  end
-
-  defp file_match?(fname, dataset_type, example_types) do
-    pattern = ~r/#{dataset_type}\/(#{Enum.join(example_types, "|")})\//
-    String.match?(List.to_string(fname), pattern)
   end
 
   defp get_label(fname) do

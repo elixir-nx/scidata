@@ -18,6 +18,7 @@ defmodule IMDBReviewsTest do
 
       assert length(test_inputs) == 25000
       assert length(test_targets) == 25000
+      assert [-1, -1, -1, -1, -1] = Enum.take(train_targets, -5)
     end
 
     test "utilizes sentiment and opts args" do

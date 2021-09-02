@@ -63,10 +63,12 @@ defmodule Scidata.IMDBReviews do
   end
 
   defp get_label(fname) do
+    fname = List.to_string(fname)
+
     cond do
-      String.match?(List.to_string(fname), ~r/pos/) -> 1
-      String.match?(List.to_string(fname), ~r/neg/) -> 0
-      String.match?(List.to_string(fname), ~r/unsup/) -> nil
+      fname =~ "pos" -> 1
+      fname =~ "neg" -> -1
+      fname =~ "unsup" -> nil
     end
   end
 end

@@ -22,7 +22,7 @@ defmodule Scidata.IMDBReviews do
   according to each example's label: `:pos` for positive examples, `:neg` for
   negative examples, and `:unsup` for unlabeled examples.
   """
-  @spec download([train_sentiment]) :: %{review: [binary(), ...], sentiment: 1 | -1}
+  @spec download([example_types: train_sentiment]) :: %{review: [binary(), ...], sentiment: 1 | 0}
   def download(
         example_types \\ [:pos, :neg],
         opts \\ []
@@ -36,7 +36,7 @@ defmodule Scidata.IMDBReviews do
   `example_types` is the same argument in `download/2` but excludes `:unsup`
   because all unlabeled examples are in the training set.
   """
-  @spec download_test([test_sentiment]) :: %{review: [binary(), ...], sentiment: 1 | -1}
+  @spec download_test([test_sentiment]) :: %{review: [binary(), ...], sentiment: 1 | 0}
   def download_test(
         example_types \\ [:pos, :neg],
         opts \\ []
@@ -67,7 +67,7 @@ defmodule Scidata.IMDBReviews do
 
     cond do
       fname =~ "pos" -> 1
-      fname =~ "neg" -> -1
+      fname =~ "neg" -> 0
       fname =~ "unsup" -> nil
     end
   end

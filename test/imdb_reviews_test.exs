@@ -6,7 +6,19 @@ defmodule IMDBReviewsTest do
   describe "download" do
     test "retrieves training set" do
       %{review: train_inputs, sentiment: train_targets} =
-        Scidata.IMDBReviews.download([:pos, :neg, :unsup])
+        Scidata.IMDBReviews.download()
+
+      assert length(train_inputs) == 25000
+      assert length(train_targets) == 25000
+
+      %{review: train_inputs, sentiment: train_targets} =
+        Scidata.IMDBReviews.download(example_types: [:pos, :neg])
+
+      assert length(train_inputs) == 25000
+      assert length(train_targets) == 25000
+
+      %{review: train_inputs, sentiment: train_targets} =
+        Scidata.IMDBReviews.download(example_types: [:pos, :neg, :unsup])
 
       assert length(train_inputs) == 75000
       assert length(train_targets) == 75000
@@ -14,18 +26,18 @@ defmodule IMDBReviewsTest do
 
     test "retrieves test set" do
       %{review: test_inputs, sentiment: test_targets} =
-        Scidata.IMDBReviews.download_test([:pos, :neg])
+        Scidata.IMDBReviews.download_test(example_types: [:pos, :neg])
 
       assert length(test_inputs) == 25000
       assert length(test_targets) == 25000
-      assert [-1, -1, -1, -1, -1] = Enum.take(train_targets, -5)
+      assert [0, 0, 0, 0, 0] = Enum.take(test_targets, -5)
     end
 
-    test "utilizes sentiment and opts args" do
+    test "utilizes transform opts" do
       clip = fn inputs -> Enum.map(inputs, &String.slice(&1, 0..20)) end
 
       %{review: reviews, sentiment: targets} =
-        Scidata.IMDBReviews.download([:pos], transform_inputs: clip)
+        Scidata.IMDBReviews.download(example_types: [:pos], transform_inputs: clip)
 
       assert Enum.take(reviews, 10) == [
                "The story centers aro",

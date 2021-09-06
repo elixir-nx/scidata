@@ -22,13 +22,8 @@ defmodule Scidata.IMDBReviews do
   according to each example's label: `:pos` for positive examples, `:neg` for
   negative examples, and `:unsup` for unlabeled examples.
   """
-  @spec download([example_types: train_sentiment]) :: %{review: [binary(), ...], sentiment: 1 | 0}
-  def download(
-        example_types \\ [:pos, :neg],
-        opts \\ []
-      ) do
-    download_dataset(example_types, :train, opts)
-  end
+  @spec download(example_types: [test_sentiment]) :: %{review: [binary(), ...], sentiment: 1 | 0}
+  def download(opts \\ []), do: download_dataset(:train, opts)
 
   @doc """
   Downloads the IMDB reviews test dataset or fetches it locally.
@@ -36,15 +31,14 @@ defmodule Scidata.IMDBReviews do
   `example_types` is the same argument in `download/2` but excludes `:unsup`
   because all unlabeled examples are in the training set.
   """
-  @spec download_test([test_sentiment]) :: %{review: [binary(), ...], sentiment: 1 | 0}
-  def download_test(
-        example_types \\ [:pos, :neg],
-        opts \\ []
-      ) do
-    download_dataset(example_types, :test, opts)
-  end
+  @spec download_test(example_types: [test_sentiment]) :: %{
+          review: [binary(), ...],
+          sentiment: 1 | 0
+        }
+  def download_test(opts \\ []), do: download_dataset(:test, opts)
 
-  defp download_dataset(example_types, dataset_type, opts) do
+  defp download_dataset(dataset_type, opts) do
+    example_types = opts[:example_types] || [:pos, :neg]
     transform_inputs = opts[:transform_inputs] || (& &1)
     transform_labels = opts[:transform_labels] || (& &1)
 

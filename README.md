@@ -6,9 +6,9 @@ Scidata currently supports the following training and test datasets:
 
 - CIFAR10
 - CIFAR100
+- FashionMNIST
 - IMDb Reviews
 - MNIST
-- FashionMNIST
 
 Download or fetch datasets locally:
 

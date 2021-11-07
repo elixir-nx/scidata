@@ -9,18 +9,6 @@ defmodule Scidata.Squad do
   @base_url "https://rajpurkar.github.io/SQuAD-explorer/dataset/"
   @dataset_file "train-v1.1.json"
 
-  @title "SQuAD: 100,000+ Questions for Machine Comprehension of Text"
-  @author "Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, Percy Liang"
-  @year "2016"
-  @month "November"
-
-  @description """
-  Stanford Question Answering Dataset (SQuAD) is a reading comprehension
-  dataset, consisting of questions posed by crowdworkers on a set of Wikipedia
-  articles, where the answer to every question is a segment of text, or span,
-  from the corresponding reading passage, or the question might be unanswerable.
-  """
-
   @doc """
   Downloads the SQuAD dataset.
 
@@ -48,17 +36,6 @@ defmodule Scidata.Squad do
         ]
       }
   """
-  def info do
-    %{
-      "article" => %{
-        "title" => @title,
-        "author" => @author,
-        "year" => @year,
-        "month" => @month
-      },
-      "description" => @description
-    }
-  end
 
   def download() do
     download_dataset()

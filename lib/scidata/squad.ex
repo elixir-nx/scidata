@@ -1,6 +1,6 @@
 defmodule Scidata.Squad do
   @moduledoc """
-  Module for downloading the [Squad dataset](https://rajpurkar.github.io/SQuAD-explorer).
+  Module for downloading the [SQuAD1.1 dataset](https://rajpurkar.github.io/SQuAD-explorer).
   """
 
   require Scidata.Utils

@@ -7,7 +7,8 @@ defmodule Scidata.Squad do
   alias Scidata.Utils
 
   @base_url "https://rajpurkar.github.io/SQuAD-explorer/dataset/"
-  @dataset_file "train-v1.1.json"
+  @train_dataset_file "train-v1.1.json"
+  @test_dataset_file "dev-v1.1.json"
 
   @doc """
   Downloads the SQuAD dataset.
@@ -38,12 +39,16 @@ defmodule Scidata.Squad do
   """
 
   def download() do
-    download_dataset()
+    download_dataset(@train_dataset_file)
   end
 
-  defp download_dataset() do
+  def download_test() do
+    download_dataset(@test_dataset_file)
+  end
+
+  defp download_dataset(dataset_name) do
     content =
-      Utils.get!(@base_url <> @dataset_file).body
+      Utils.get!(@base_url <> dataset_name).body
       |> Jason.decode!()
 
     content["data"]

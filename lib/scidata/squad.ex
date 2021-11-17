@@ -79,8 +79,8 @@ defmodule Scidata.Squad do
 
       next_ids = qas |> Enum.map(& &1["id"])
 
-      next_contexts = Stream.repeatedly(fn -> context end) |> Enum.take(length(next_questions))
-      next_titles = Stream.repeatedly(fn -> title end) |> Enum.take(length(next_questions))
+      next_contexts = List.duplicate(context, length(next_questions))
+      next_titles = List.duplicate(title, length(next_questions))
 
       %{
         id: [next_ids | ids],

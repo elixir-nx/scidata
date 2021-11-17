@@ -109,10 +109,8 @@ defmodule Scidata.Utils do
   defp map_to_table(acc, map) do
     map
     |> Enum.map(fn {key, value} ->
-      current_value = acc[key]
-
-      new_value = value
-      list = current_value ++ [new_value]
+      acc_value = acc[key]
+      list = acc_value ++ [value]
 
       {key, list}
     end)

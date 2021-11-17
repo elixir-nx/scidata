@@ -90,4 +90,32 @@ defmodule Scidata.Utils do
     path = Enum.join([uri.host, String.replace(uri.path, "/", "-")], "-")
     Path.join(System.tmp_dir!(), path)
   end
+
+  def map_list_to_table(list, keys) do
+    keys
+    |> Enum.map(&{&1, []})
+    |> Enum.into(%{})
+    |> to_table(list)
+  end
+
+  defp to_table(acc, []), do: acc
+
+  defp to_table(acc, [head | tail]) do
+    acc
+    |> map_to_table(head)
+    |> to_table(tail)
+  end
+
+  defp map_to_table(acc, map) do
+    map
+    |> Enum.map(fn {key, value} ->
+      current_value = acc[key]
+
+      new_value = value
+      list = current_value ++ [new_value]
+
+      {key, list}
+    end)
+    |> Enum.into(%{})
+  end
 end

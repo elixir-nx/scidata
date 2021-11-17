@@ -12,7 +12,9 @@ defmodule Scidata.Squad do
 
   @doc """
   Downloads the SQuAD dataset.
+
   ## Examples
+
       iex> Scidata.Squad.download()
       %{
         [

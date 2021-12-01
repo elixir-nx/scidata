@@ -94,20 +94,24 @@ defmodule Scidata.Squad do
   end
 
   def get_join_tables(results) do
-    results
-    |> Enum.reduce(
-      {
-        %{title: [], title_id: []},
-        %{context: [], context_id: [], title_id: []},
-        %{
-          context_id: [],
-          question_id: [],
-          question: [],
-          answer: []
-        }
-      },
-      &to_tables/2
-    )
+    {titles, contexts, qas} =
+      results
+      |> Enum.reduce(
+        {
+          %{title: [], title_id: []},
+          %{context: [], context_id: [], title_id: []},
+          %{
+            context_id: [],
+            question_id: [],
+            question: [],
+            answer_text: [],
+            answer_start: []
+          }
+        },
+        &to_tables/2
+      )
+
+    {reverse_and_flatten(titles), reverse_and_flatten(contexts), reverse_and_flatten(qas)}
   end
 
   defp to_tables(%{"paragraphs" => paragraphs, "title" => title}, acc) do
@@ -119,8 +123,8 @@ defmodule Scidata.Squad do
 
     next_titles = %{
       title_acc
-      | title: titles ++ [title],
-        title_id: title_ids ++ [next_title_id]
+      | title: [title | titles],
+        title_id: [next_title_id | title_ids]
     }
 
     {next_contexts, next_qas} =
@@ -135,34 +139,41 @@ defmodule Scidata.Squad do
                title_id: title_ids
              } = curr_context_acc,
              %{
-               answer: answers,
                context_id: foreign_context_ids,
                question: questions,
-               question_id: question_ids
+               question_id: question_ids,
+               answer_start: answer_starts,
+               answer_text: answer_texts
              } = curr_qa_acc
            } ->
           next_context_id = length(contexts) + 1
 
           next_questions = qas |> Enum.map(& &1["question"])
-          next_answers = qas |> Enum.map(& &1["answers"])
-          next_ids = qas |> Enum.map(& &1["id"])
+          next_question_ids = qas |> Enum.map(& &1["id"])
+
+          answers = qas |> Enum.map(& &1["answers"])
+          # Each answer is a singleton
+          next_answer_starts = answers |> Enum.map(&hd(&1)["answer_start"])
+          next_answer_texts = answers |> Enum.map(&hd(&1)["text"])
 
           next_context_acc = %{
             curr_context_acc
-            | context: contexts ++ [context],
-              context_id: context_ids ++ [next_context_id],
-              title_id: title_ids ++ [next_title_id]
+            | context: [context | contexts],
+              context_id: [next_context_id | context_ids],
+              title_id: [next_title_id | title_ids]
           }
+
+          next_foreign_context_ids =
+            Stream.repeatedly(fn -> next_context_id end)
+            |> Enum.take(length(next_questions))
 
           next_qa_acc = %{
             curr_qa_acc
-            | answer: answers ++ next_answers,
-              context_id:
-                foreign_context_ids ++
-                  (Stream.repeatedly(fn -> next_context_id end)
-                   |> Enum.take(length(next_questions))),
-              question: questions ++ next_questions,
-              question_id: question_ids ++ next_ids
+            | context_id: [next_foreign_context_ids | foreign_context_ids],
+              question: [next_questions | questions],
+              question_id: [next_question_ids | question_ids],
+              answer_start: [next_answer_starts | answer_starts],
+              answer_text: [next_answer_texts | answer_texts]
           }
 
           {next_context_acc, next_qa_acc}
@@ -170,5 +181,9 @@ defmodule Scidata.Squad do
       )
 
     {next_titles, next_contexts, next_qas}
+  end
+
+  defp reverse_and_flatten(acc) do
+    Enum.reduce(acc, %{}, fn {k, v}, acc -> Map.put(acc, k, :lists.reverse(List.flatten(v))) end)
   end
 end

@@ -54,18 +54,20 @@ defmodule Scidata.CIFAR10 do
   end
 
   defp parse_images(content) do
-    for <<example::size(3073)-binary <- content>>, reduce: {<<>>, <<>>} do
-      {images, labels} ->
-        <<label::size(8)-bitstring, image::size(3072)-binary>> = example
+    {images, labels} =
+      for <<example::size(3073)-binary <- content>>, reduce: {[], []} do
+        {images, labels} ->
+          <<label::size(8)-bitstring, image::size(3072)-binary>> = example
+          {[image | images], [label | labels]}
+      end
 
-        {images <> image, labels <> label}
-    end
+    {Enum.reverse(images), Enum.reverse(labels)}
   end
 
   defp download_dataset(dataset_type) do
     files = Utils.get!(@base_url <> @dataset_file).body
 
-    {imgs, labels} =
+    {images, labels} =
       files
       |> Enum.filter(fn {fname, _} ->
         String.match?(
@@ -78,11 +80,12 @@ defmodule Scidata.CIFAR10 do
       end)
       |> Enum.map(fn {_, content} -> Task.async(fn -> parse_images(content) end) end)
       |> Enum.map(&Task.await(&1, :infinity))
-      |> Enum.reduce({<<>>, <<>>}, fn {image, label}, {image_acc, label_acc} ->
-        {image_acc <> image, label_acc <> label}
-      end)
+      |> Enum.unzip()
 
-    {{imgs, {:u, 8}, if(dataset_type == :test, do: @test_images_shape, else: @train_images_shape)},
+    images = IO.iodata_to_binary(images)
+    labels = IO.iodata_to_binary(labels)
+
+    {{images, {:u, 8}, if(dataset_type == :test, do: @test_images_shape, else: @train_images_shape)},
      {labels, {:u, 8}, if(dataset_type == :test, do: @test_labels_shape, else: @train_labels_shape)}}
   end
 end

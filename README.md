@@ -20,34 +20,31 @@ Download or fetch datasets locally:
 {images_binary, tensor_type, shape} = train_images
 ```
 
-You can also pass transform functions to `download/1`:
+Most often you will convert those results to `Nx` tensors:
 
 ```elixir
-transform_images = fn {binary, type, shape} ->
-  binary
-  |> Nx.from_binary(type)
-  |> Nx.reshape(shape)
-  |> Nx.divide(255)
-  |> Nx.to_batched_list(32)
-end
-
 {train_images, train_labels} =
   Scidata.MNIST.download(transform_images: transform_images)
 
-# Transform labels as well, e.g. get one-hot encoding
-transform_labels = fn {labels_binary, type, _} ->
+# Normalize and batch images
+{images_binary, images_type, images_shape} = train_images
+
+batched_images =
+  images_binary
+  |> Nx.from_binary(images_type)
+  |> Nx.reshape(images_shape)
+  |> Nx.divide(255)
+  |> Nx.to_batched_list(32)
+
+# One-hot-encode and batch labels
+{labels_binary, labels_type, _shape} = train_labels
+
+batchd_labels =
   labels_binary
-  |> Nx.from_binary(type)
+  |> Nx.from_binary(labels_type)
   |> Nx.new_axis(-1)
   |> Nx.equal(Nx.tensor(Enum.to_list(0..9)))
   |> Nx.to_batched_list(32)
-end
-
-{images, labels} =
-  Scidata.MNIST.download(
-    transform_images: transform_images,
-    transform_labels: transform_labels
-  )
 ```
 
 ## Installation

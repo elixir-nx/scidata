@@ -1,7 +1,7 @@
 defmodule YelpPolarityReviewsTest do
   use ExUnit.Case
 
-  @moduletag timeout: 120_0000
+  @moduletag timeout: 120_000
 
   describe "download" do
     test "retrieves training set" do

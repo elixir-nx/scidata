@@ -13,7 +13,7 @@ defmodule Scidata.YelpFullReviews do
   @doc """
   Downloads the Yelp Reviews training dataset or fetches it locally.
   """
-  @spec download() :: %{review: [binary(), ...], rating: 5 | 4 | 3 | 2 | 1}
+  @spec download() :: %{review: [binary(), ...], rating: [5 | 4 | 3 | 2 | 1]}
   def download(), do: download_dataset(:train)
 
   @doc """
@@ -21,7 +21,7 @@ defmodule Scidata.YelpFullReviews do
   """
   @spec download_test() :: %{
           review: [binary(), ...],
-          rating: 5 | 4 | 3 | 2 | 1
+          rating: [5 | 4 | 3 | 2 | 1]
         }
   def download_test(), do: download_dataset(:test)
 

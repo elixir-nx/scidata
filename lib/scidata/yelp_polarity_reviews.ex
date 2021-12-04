@@ -13,7 +13,7 @@ defmodule Scidata.YelpPolarityReviews do
   @doc """
   Downloads the Yelp Polarity Reviews training dataset or fetches it locally.
   """
-  @spec download() :: %{review: [binary(), ...], sentiment: 1 | 0}
+  @spec download() :: %{review: [binary(), ...], sentiment: [1 | 0]}
   def download(), do: download_dataset(:train)
 
   @doc """
@@ -21,7 +21,7 @@ defmodule Scidata.YelpPolarityReviews do
   """
   @spec download_test() :: %{
           review: [binary(), ...],
-          sentiment: 1 | 0
+          sentiment: [1 | 0]
         }
   def download_test(), do: download_dataset(:test)
 

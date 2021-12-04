@@ -28,21 +28,25 @@ defmodule Scidata.YelpPolarityReviews do
     files = Utils.get!(@base_url <> @dataset_file).body
     regex = ~r"#{dataset_type}"
 
-    [records | _] =
-      for {fname, contents} <- files do
-        if List.to_string(fname) =~ regex do
-          contents
-          |> StringIO.open()
-          |> elem(1)
-          |> IO.binstream(:line)
-          |> CSV.decode!()
-          |> Enum.to_list()
-        end
+    records =
+      for {fname, contents} <- files,
+          List.to_string(fname) =~ regex,
+          reduce: [[]] do
+        _ -> parse_csv(contents)
       end
 
     %{
       review: records |> Enum.map(&List.last(&1)),
       sentiment: records |> Enum.map(fn x -> x |> List.first() |> String.to_integer() end)
     }
+  end
+
+  defp parse_csv(content) do
+    content
+    |> StringIO.open()
+    |> elem(1)
+    |> IO.binstream(:line)
+    |> CSV.decode!()
+    |> Enum.to_list()
   end
 end

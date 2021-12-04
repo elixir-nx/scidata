@@ -8,6 +8,7 @@ defmodule Scidata.YelpPolarityReviews do
   @dataset_file "yelp_review_polarity_csv.tgz"
 
   alias Scidata.Utils
+  alias NimbleCSV.RFC4180, as: CSV
 
   @doc """
   Downloads the Yelp Polarity Reviews training dataset or fetches it locally.
@@ -32,7 +33,7 @@ defmodule Scidata.YelpPolarityReviews do
       for {fname, contents} <- files,
           List.to_string(fname) =~ regex,
           reduce: [[]] do
-        _ -> parse_csv(contents)
+        _ -> CSV.parse_string(contents, skip_headers: false)
       end
 
     %{
@@ -41,24 +42,10 @@ defmodule Scidata.YelpPolarityReviews do
     }
   end
 
-  defp parse_csv(content) do
-    content
-    |> StringIO.open()
-    |> elem(1)
-    |> IO.binstream(:line)
-    |> CSV.decode!()
-    |> Enum.to_list()
-  end
-
   defp get_rating(records) do
-    records
-    |> Enum.map(fn x ->
-      x
-      |> List.first()
-      |> case do
-        "1" -> 0
-        "2" -> 1
-      end
+    Enum.map(records, fn
+      ["1" | _] -> 0
+      ["2" | _] -> 1
     end)
   end
 end

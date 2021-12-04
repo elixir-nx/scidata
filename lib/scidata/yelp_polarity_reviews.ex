@@ -12,7 +12,7 @@ defmodule Scidata.YelpPolarityReviews do
   @doc """
   Downloads the Yelp Polarity Reviews training dataset or fetches it locally.
   """
-  @spec download() :: %{review: [binary(), ...], sentiment: 2 | 1}
+  @spec download() :: %{review: [binary(), ...], sentiment: 1 | 0}
   def download(), do: download_dataset(:train)
 
   @doc """
@@ -20,7 +20,7 @@ defmodule Scidata.YelpPolarityReviews do
   """
   @spec download_test() :: %{
           review: [binary(), ...],
-          sentiment: 2 | 1
+          sentiment: 1 | 0
         }
   def download_test(), do: download_dataset(:test)
 
@@ -37,7 +37,7 @@ defmodule Scidata.YelpPolarityReviews do
 
     %{
       review: records |> Enum.map(&List.last(&1)),
-      sentiment: records |> Enum.map(fn x -> x |> List.first() |> String.to_integer() end)
+      sentiment: get_rating(records)
     }
   end
 
@@ -48,5 +48,17 @@ defmodule Scidata.YelpPolarityReviews do
     |> IO.binstream(:line)
     |> CSV.decode!()
     |> Enum.to_list()
+  end
+
+  defp get_rating(records) do
+    records
+    |> Enum.map(fn x ->
+      x
+      |> List.first()
+      |> case do
+        "1" -> 0
+        "2" -> 1
+      end
+    end)
   end
 end

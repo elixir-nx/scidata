@@ -9,6 +9,7 @@ Scidata currently supports the following training and test datasets:
 - FashionMNIST
 - IMDb Reviews
 - MNIST
+- Kuzushiji-MNIST(KMNIST)
 
 Download or fetch datasets locally:
 

@@ -23,8 +23,7 @@ Download or fetch datasets locally:
 Most often you will convert those results to `Nx` tensors:
 
 ```elixir
-{train_images, train_labels} =
-  Scidata.MNIST.download(transform_images: transform_images)
+{train_images, train_labels} = Scidata.MNIST.download()
 
 # Normalize and batch images
 {images_binary, images_type, images_shape} = train_images

@@ -1,4 +1,4 @@
-defmodule KuzushijiMNISTTest do
+defmodule MNISTTest do
   use ExUnit.Case
 
   @moduletag timeout: 120_000
@@ -6,7 +6,7 @@ defmodule KuzushijiMNISTTest do
   describe "download" do
     test "retrieves training set" do
       {{_images, {:u, 8}, {n_images, 1, n_rows, n_cols}}, {_labels, {:u, 8}, {n_labels}}} =
-        Scidata.KuzushijiMNIST.download()
+        Scidata.MNIST.download()
 
       assert n_images == 60000
       assert n_rows == 28
@@ -16,7 +16,7 @@ defmodule KuzushijiMNISTTest do
 
     test "retrieves test set" do
       {{_images, {:u, 8}, {n_images, 1, n_rows, n_cols}}, {_labels, {:u, 8}, {n_labels}}} =
-        Scidata.KuzushijiMNIST.download_test()
+        Scidata.MNIST.download_test()
 
       assert n_images == 10000
       assert n_rows == 28

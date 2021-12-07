@@ -33,8 +33,6 @@ defmodule Scidata.KuzushijiMNIST do
 
   @doc """
   Downloads the Kuzushiji MNIST test dataset or fetches it locally.
-
-  Accepts the same options as `download/1`.
   """
   def download_test() do
     {download_images(@test_image_file), download_labels(@test_label_file)}

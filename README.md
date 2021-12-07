@@ -8,7 +8,7 @@ Scidata currently supports the following training and test datasets:
 - CIFAR100
 - FashionMNIST
 - IMDb Reviews
-- Yelp Reviews(Full and Polarity)
+- Yelp Reviews (Full and Polarity)
 - MNIST
 
 Download or fetch datasets locally:

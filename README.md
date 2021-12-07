@@ -8,9 +8,9 @@ Scidata currently supports the following training and test datasets:
 - CIFAR100
 - FashionMNIST
 - IMDb Reviews
-- Yelp Reviews (Full and Polarity)
+- Kuzushiji-MNIST (KMNIST)
 - MNIST
-- Kuzushiji-MNIST(KMNIST)
+- Yelp Reviews (Full and Polarity)
 
 Download or fetch datasets locally:
 
@@ -53,7 +53,7 @@ batchd_labels =
 ```elixir
 def deps do
   [
-    {:scidata, "~> 0.1.1"}
+    {:scidata, "~> 0.1.3"}
   ]
 end
 ```

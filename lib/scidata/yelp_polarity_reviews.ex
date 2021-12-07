@@ -1,6 +1,6 @@
 defmodule Scidata.YelpPolarityReviews do
   @moduledoc """
-  Module for downloading the [Yelp Reviews dataset](https://www.yelp.com/dataset).
+  Module for downloading the [Yelp Polarity Reviews dataset](https://course.fast.ai/datasets#nlp).
   """
 
   @base_url "https://s3.amazonaws.com/fast-ai-nlp/"

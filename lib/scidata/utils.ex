@@ -56,7 +56,7 @@ defmodule Scidata.Utils do
 
   defp decode({request, response}) do
     cond do
-      String.ends_with?(request.url, ".tar.gz") ->
+      String.ends_with?(request.url, ".tar.gz") or String.ends_with?(request.url, ".tgz") ->
         {:ok, files} = :erl_tar.extract({:binary, response.body}, [:memory, :compressed])
         response = %{response | body: files}
         {request, response}

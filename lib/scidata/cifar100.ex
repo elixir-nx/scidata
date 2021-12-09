@@ -16,25 +16,17 @@ defmodule Scidata.CIFAR100 do
   @doc """
   Downloads the CIFAR100 training dataset or fetches it locally.
 
-  ## Options
+  Returns a tuple of format:
 
-    * `:transform_images` - A function that transforms images, defaults to
-      `& &1`.
+      {{images_binary, images_type, images_shape},
+       {labels_binary, labels_type, labels_shape}}
 
-      It accepts a tuple like `{binary_data, tensor_type, data_shape}` which
-      can be used for converting the `binary_data` to a tensor with a function
-      like:
+  If you want to one-hot encode the labels, you can:
 
-          fn {labels_binary, type, _shape} ->
-            labels_binary
-            |> Nx.from_binary(type)
-            |> Nx.new_axis(-1)
-            |> Nx.equal(Nx.tensor(Enum.to_list(0..9)))
-            |> Nx.to_batched_list(32)
-          end
-
-    * `:transform_labels` - similar to `:transform_images` but applied to
-      dataset labels
+      labels_binary
+      |> Nx.from_binary(labels_type)
+      |> Nx.new_axis(-1)
+      |> Nx.equal(Nx.tensor(Enum.to_list(0..9)))
 
   ## Examples
 
@@ -48,8 +40,8 @@ defmodule Scidata.CIFAR100 do
         {:u, 8}, {50000, 2}}}
 
   """
-  def download(opts \\ []) do
-    download_dataset(:train, opts)
+  def download() do
+    download_dataset(:train)
   end
 
   @doc """
@@ -57,26 +49,25 @@ defmodule Scidata.CIFAR100 do
 
   Accepts the same options as `download/1`.
   """
-  def download_test(opts \\ []) do
-    download_dataset(:test, opts)
+  def download_test() do
+    download_dataset(:test)
   end
 
   defp parse_images(content) do
-    for <<example::size(3074)-binary <- content>>, reduce: {<<>>, <<>>} do
-      {images, labels} ->
-        <<label::size(2)-binary, image::size(3072)-binary>> = example
+    {images, labels} =
+      for <<example::size(3074)-binary <- content>>, reduce: {[], []} do
+        {images, labels} ->
+          <<label::size(2)-binary, image::size(3072)-binary>> = example
+          {[image | images], [label | labels]}
+      end
 
-        {images <> image, labels <> label}
-    end
+    {Enum.reverse(images), Enum.reverse(labels)}
   end
 
-  defp download_dataset(dataset_type, opts) do
-    transform_images = opts[:transform_images] || (& &1)
-    transform_labels = opts[:transform_labels] || (& &1)
-
+  defp download_dataset(dataset_type) do
     files = Utils.get!(@base_url <> @dataset_file).body
 
-    {imgs, labels} =
+    {images, labels} =
       files
       |> Enum.filter(fn {fname, _} ->
         String.match?(
@@ -89,17 +80,12 @@ defmodule Scidata.CIFAR100 do
       end)
       |> Enum.map(fn {_, content} -> Task.async(fn -> parse_images(content) end) end)
       |> Enum.map(&Task.await(&1, :infinity))
-      |> Enum.reduce({<<>>, <<>>}, fn {image, label}, {image_acc, label_acc} ->
-        {image_acc <> image, label_acc <> label}
-      end)
+      |> Enum.unzip()
 
-    {transform_images.(
-       {imgs, {:u, 8},
-        if(dataset_type == :test, do: @test_images_shape, else: @train_images_shape)}
-     ),
-     transform_labels.(
-       {labels, {:u, 8},
-        if(dataset_type == :test, do: @test_labels_shape, else: @train_labels_shape)}
-     )}
+    images = IO.iodata_to_binary(images)
+    labels = IO.iodata_to_binary(labels)
+
+    {{images, {:u, 8}, if(dataset_type == :test, do: @test_images_shape, else: @train_images_shape)},
+     {labels, {:u, 8}, if(dataset_type == :test, do: @test_labels_shape, else: @train_labels_shape)}}
   end
 end

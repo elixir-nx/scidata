@@ -114,7 +114,7 @@ defmodule Scidata.Squad do
     {reverse_and_flatten(titles), reverse_and_flatten(contexts), reverse_and_flatten(qas)}
   end
 
-  defp to_tables(%{"paragraphs" => paragraphs, "title" => title}, acc) do
+  defp add_example(%{"paragraphs" => paragraphs, "title" => title}, acc) do
     {title_acc, context_acc, qa_acc} = acc
 
     %{title: titles, title_id: title_ids} = title_acc

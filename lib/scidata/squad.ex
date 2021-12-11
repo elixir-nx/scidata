@@ -93,7 +93,7 @@ defmodule Scidata.Squad do
     |> Enum.reduce(%{}, fn {k, v}, acc -> Map.put(acc, k, :lists.reverse(List.flatten(v))) end)
   end
 
-  def get_join_tables(results) do
+  def to_map(dataset) do
     {titles, contexts, qas} =
       results
       |> Enum.reduce(

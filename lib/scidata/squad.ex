@@ -175,8 +175,7 @@ defmodule Scidata.Squad do
           }
 
           next_foreign_context_ids =
-            Stream.repeatedly(fn -> next_context_id end)
-            |> Enum.take(length(next_questions))
+            List.duplicate(next_context_id, length(next_questions))
 
           next_qa_acc = %{
             curr_qa_acc

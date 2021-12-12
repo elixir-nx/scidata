@@ -82,7 +82,8 @@ defmodule Scidata.Squad do
   Converts the squad dataset to a tuple containing three maps.
 
   ## Examples
-    iex> Scidata.Squad.to_maps(entries)
+
+      iex> Scidata.Squad.to_maps(entries)
       {
         %{
           title: ["University_of_Notre_Dame", "Beyoncé", ...],

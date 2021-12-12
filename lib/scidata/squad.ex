@@ -11,36 +11,60 @@ defmodule Scidata.Squad do
   @test_dataset_file "dev-v1.1.json"
 
   @doc """
-  Downloads the SQuAD dataset.
+  Downloads the SQuAD training dataset
 
   ## Examples
 
       iex> Scidata.Squad.download()
-      %{
-        [
-          %{
-            "paragraphs" => [
-              %{
-                "context" => "In many cities along the North American...",
-                "qas" => [
-                  %{
-                    "answers" => [%{"answer_start" => 324, "text" => "hundreds"}],
-                    "id" => "56d8a0ddbfea0914004b7706",
-                    "question" => "How many people protested on the San Francisco torch route?"
-                  },
-                  ...
-                ]
-              }
-              ...
-            ]
-          }
-        ]
-      }
+      [
+        %{
+          "paragraphs" => [
+            %{
+              "context" => "Architecturally, the school has a...",
+              "qas" => [
+                %{
+                  "answers" => [%{"answer_start" => 515, "text" => "Saint Bernadette Soubirous"}],
+                  "id" => "5733be284776f41900661182",
+                  "question" => "To whom did the..."
+                }, ...
+              ]
+            }
+          ],
+          "title" => "University_of_Notre_Dame"
+        }, ...
+      ]
   """
 
   def download() do
     download_dataset(@train_dataset_file)
   end
+
+  @doc """
+  Downloads the SQuAD test dataset
+
+  ## Examples
+
+      iex> Scidata.Squad.download_test()
+      [
+        %{
+          "paragraphs" => [
+            %{
+              "context" => "Super Bowl 50 was an American football game t...",
+              "qas" => [
+                %{
+                  "answers" => [
+                    %{"answer_start" => 177, "text" => "Denver Broncos"},...
+                  ],
+                  "id" => "56be4db0acb8001400a502ec",
+                  "question" => "Which NFL team represented the AFC at Super Bowl 50?"
+                },
+              ]
+            }
+          ],
+          "title" => "Super_Bowl_50"
+        }, ...
+      ]
+  """
 
   def download_test() do
     download_dataset(@test_dataset_file)
@@ -54,46 +78,32 @@ defmodule Scidata.Squad do
     content["data"]
   end
 
-  def flatten(results) do
-    results
-    |> Enum.reduce(
-      %{id: [], title: [], context: [], question: [], answer: []},
-      &process_example/2
-    )
-  end
+  @doc """
+  Converts the squad dataset to a tuple containing three maps.
 
-  def process_example(%{"paragraphs" => paragraphs, "title" => title}, acc) do
-    paragraphs
-    |> Enum.reduce(acc, fn %{"context" => context, "qas" => qas},
-                           %{
-                             id: ids,
-                             title: titles,
-                             context: contexts,
-                             question: questions,
-                             answer: answers
-                           } ->
-      next_questions = qas |> Enum.map(& &1["question"])
-
-      next_answers =
-        qas |> Enum.map(&(&1["answers"] |> Utils.map_list_to_table(["answer_start", "text"])))
-
-      next_ids = qas |> Enum.map(& &1["id"])
-
-      next_contexts = List.duplicate(context, length(next_questions))
-      next_titles = List.duplicate(title, length(next_questions))
-
-      %{
-        id: [next_ids | ids],
-        title: [next_titles | titles],
-        context: [next_contexts | contexts],
-        question: [next_questions | questions],
-        answer: [next_answers | answers]
+  ## Examples
+    iex> Scidata.Squad.to_maps(entries)
+      {
+        %{
+          title: ["University_of_Notre_Dame", "Beyoncé", ...],
+          title_id: [1, 2, ...]
+        },
+        %{
+          context: ["Architecturally, the school has a C...", ...],
+          context_id: [1, 2, ...],
+          title_id: [1, 1, ...]
+        },
+        %{
+          answer_start: [92, 381, ...],
+          answer_text: ["a golden statue of...", "a Marian place...", ...],
+          context_id: [1, 1, ...],
+          question: ["What sits on top of the...", "What is the...", ...],
+          question_id: ["5733be284776f4190066117e", "5733be284776f41900661181", ...]
+        }
       }
-    end)
-    |> Enum.reduce(%{}, fn {k, v}, acc -> Map.put(acc, k, :lists.reverse(List.flatten(v))) end)
-  end
+  """
 
-  def to_map(dataset) do
+  def to_maps(results) do
     {titles, contexts, qas} =
       results
       |> Enum.reduce(
@@ -108,13 +118,13 @@ defmodule Scidata.Squad do
             answer_start: []
           }
         },
-        &to_tables/2
+        &add_to_maps/2
       )
 
     {reverse_and_flatten(titles), reverse_and_flatten(contexts), reverse_and_flatten(qas)}
   end
 
-  defp add_example(%{"paragraphs" => paragraphs, "title" => title}, acc) do
+  defp add_to_maps(%{"paragraphs" => paragraphs, "title" => title}, acc) do
     {title_acc, context_acc, qa_acc} = acc
 
     %{title: titles, title_id: title_ids} = title_acc

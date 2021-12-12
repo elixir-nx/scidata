@@ -79,7 +79,62 @@ defmodule Scidata.Squad do
   end
 
   @doc """
-  Converts the squad dataset to a tuple containing three maps.
+  Convert a list of maps into a single map with containing list-type values.
+
+  ## Examples
+
+      iex> Scidata.Squad.flatten(entries)
+      %{
+        "answer_start" => [515, ...],
+        "context" => ["Architecturally, the...", ...],
+        "id" => ["5733be284776f41900661182", ...],
+        "question" => ["To whom did the Vir...", ...],
+        "text" => ["Saint Bernadette Soubirous", ...],
+        "title" => ["University_of_Notre_Dame", ...]
+      }
+
+  """
+
+  def flatten(entries) do
+    normalized_data =
+      for %{"paragraphs" => paragraph, "title" => title} <- entries,
+          %{"context" => context, "qas" => qas} <- paragraph,
+          %{"id" => id, "question" => question, "answers" => answers} <- qas,
+          answer <- answers do
+        Map.merge(answer, %{
+          "id" => id,
+          "context" => context,
+          "question" => question,
+          "title" => title
+        })
+      end
+
+    table = %{
+      "answer_start" => [],
+      "context" => [],
+      "id" => [],
+      "question" => [],
+      "text" => [],
+      "title" => []
+    }
+
+    normalized_data
+    |> Enum.reduce(table, fn map, acc ->
+      Enum.map(acc, fn {key, values} ->
+        {key, [map[key] | values]}
+      end)
+    end)
+    |> Enum.map(fn {key, values} -> {key, :lists.reverse(values)} end)
+    |> Enum.into(%{})
+  end
+
+  @doc """
+  Converts the squad dataset to a tuple containing three maps,
+  titles, contexts and details of the questions.
+
+  Return a tuple of format:
+
+      {titles, contexts, qas}
 
   ## Examples
 

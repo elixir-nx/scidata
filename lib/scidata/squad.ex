@@ -79,11 +79,11 @@ defmodule Scidata.Squad do
   end
 
   @doc """
-  Convert a list of maps into a single map with containing list-type values.
+  Convert result of `download/0` or `download_test/0` to map for use with `Explorer.DataFrame`.
 
   ## Examples
 
-      iex> Scidata.Squad.to_columns(entries)
+      iex> columns_for_df = Scidata.Squad.download() |> Scidata.Squad.to_columns()
       %{
         "answer_start" => [515, ...],
         "context" => ["Architecturally, the...", ...],
@@ -92,7 +92,11 @@ defmodule Scidata.Squad do
         "answer_text" => ["Saint Bernadette Soubirous", ...],
         "title" => ["University_of_Notre_Dame", ...]
       }
-
+      iex> Explorer.DataFrame.from_map(columns_for_df)
+      #Explorer.DataFrame<
+      [rows: 87599, columns: 6]
+      ...
+      >
   """
 
   def to_columns(entries) do

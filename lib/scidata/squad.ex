@@ -83,172 +83,51 @@ defmodule Scidata.Squad do
 
   ## Examples
 
-      iex> Scidata.Squad.flatten(entries)
+      iex> Scidata.Squad.to_columns(entries)
       %{
         "answer_start" => [515, ...],
         "context" => ["Architecturally, the...", ...],
         "id" => ["5733be284776f41900661182", ...],
         "question" => ["To whom did the Vir...", ...],
-        "text" => ["Saint Bernadette Soubirous", ...],
+        "answer_text" => ["Saint Bernadette Soubirous", ...],
         "title" => ["University_of_Notre_Dame", ...]
       }
 
   """
 
-  def flatten(entries) do
-    normalized_data =
-      for %{"paragraphs" => paragraph, "title" => title} <- entries,
-          %{"context" => context, "qas" => qas} <- paragraph,
-          %{"id" => id, "question" => question, "answers" => answers} <- qas,
-          answer <- answers do
-        Map.merge(answer, %{
-          "id" => id,
-          "context" => context,
-          "question" => question,
-          "title" => title
-        })
-      end
-
+  def to_columns(entries) do
     table = %{
       "answer_start" => [],
       "context" => [],
       "id" => [],
       "question" => [],
-      "text" => [],
+      "answer_text" => [],
       "title" => []
     }
 
-    normalized_data
-    |> Enum.reduce(table, fn map, acc ->
-      Enum.map(acc, fn {key, values} ->
-        {key, [map[key] | values]}
-      end)
-    end)
+    for %{"paragraphs" => paragraph, "title" => title} <- entries,
+        %{"context" => context, "qas" => qas} <- paragraph,
+        %{"id" => id, "question" => question, "answers" => answers} <- qas,
+        %{"answer_start" => answer_start, "text" => answer_text} <- answers,
+        reduce: table do
+      %{
+        "answer_start" => answer_starts,
+        "context" => contexts,
+        "id" => ids,
+        "question" => questions,
+        "answer_text" => answer_texts,
+        "title" => titles
+      } ->
+        %{
+          "answer_start" => [answer_start | answer_starts],
+          "context" => [context | contexts],
+          "id" => [id | ids],
+          "question" => [question | questions],
+          "answer_text" => [answer_text | answer_texts],
+          "title" => [title | titles]
+        }
+    end
     |> Enum.map(fn {key, values} -> {key, :lists.reverse(values)} end)
     |> Enum.into(%{})
-  end
-
-  @doc """
-  Converts the squad dataset to a tuple containing three maps,
-  titles, contexts and details of the questions.
-
-  Return a tuple of format:
-
-      {titles, contexts, qas}
-
-  ## Examples
-
-      iex> Scidata.Squad.to_maps(entries)
-      {
-        %{
-          title: ["University_of_Notre_Dame", "Beyoncé", ...],
-          title_id: [1, 2, ...]
-        },
-        %{
-          context: ["Architecturally, the school has a C...", ...],
-          context_id: [1, 2, ...],
-          title_id: [1, 1, ...]
-        },
-        %{
-          answer_start: [92, 381, ...],
-          answer_text: ["a golden statue of...", "a Marian place...", ...],
-          context_id: [1, 1, ...],
-          question: ["What sits on top of the...", "What is the...", ...],
-          question_id: ["5733be284776f4190066117e", "5733be284776f41900661181", ...]
-        }
-      }
-  """
-
-  def to_maps(results) do
-    {titles, contexts, qas} =
-      results
-      |> Enum.reduce(
-        {
-          %{title: [], title_id: []},
-          %{context: [], context_id: [], title_id: []},
-          %{
-            context_id: [],
-            question_id: [],
-            question: [],
-            answer_text: [],
-            answer_start: []
-          }
-        },
-        &add_to_maps/2
-      )
-
-    {reverse_and_flatten(titles), reverse_and_flatten(contexts), reverse_and_flatten(qas)}
-  end
-
-  defp add_to_maps(%{"paragraphs" => paragraphs, "title" => title}, acc) do
-    {title_acc, context_acc, qa_acc} = acc
-
-    %{title: titles, title_id: title_ids} = title_acc
-
-    next_title_id = length(titles) + 1
-
-    next_titles = %{
-      title_acc
-      | title: [title | titles],
-        title_id: [next_title_id | title_ids]
-    }
-
-    {next_contexts, next_qas} =
-      paragraphs
-      |> Enum.reduce(
-        {context_acc, qa_acc},
-        fn %{"context" => context, "qas" => qas},
-           {
-             %{
-               context: contexts,
-               context_id: context_ids,
-               title_id: title_ids
-             } = curr_context_acc,
-             %{
-               context_id: foreign_context_ids,
-               question: questions,
-               question_id: question_ids,
-               answer_start: answer_starts,
-               answer_text: answer_texts
-             } = curr_qa_acc
-           } ->
-          next_context_id = length(contexts) + 1
-
-          next_questions = qas |> Enum.map(& &1["question"])
-          next_question_ids = qas |> Enum.map(& &1["id"])
-
-          answers = qas |> Enum.map(& &1["answers"])
-          # Each answer is a singleton
-          next_answer_starts = answers |> Enum.map(&hd(&1)["answer_start"])
-          next_answer_texts = answers |> Enum.map(&hd(&1)["text"])
-
-          next_context_acc = %{
-            curr_context_acc
-            | context: [context | contexts],
-              context_id: [next_context_id | context_ids],
-              title_id: [next_title_id | title_ids]
-          }
-
-          next_foreign_context_ids =
-            List.duplicate(next_context_id, length(next_questions))
-
-          next_qa_acc = %{
-            curr_qa_acc
-            | context_id: [next_foreign_context_ids | foreign_context_ids],
-              question: [next_questions | questions],
-              question_id: [next_question_ids | question_ids],
-              answer_start: [next_answer_starts | answer_starts],
-              answer_text: [next_answer_texts | answer_texts]
-          }
-
-          {next_context_acc, next_qa_acc}
-        end
-      )
-
-    {next_titles, next_contexts, next_qas}
-  end
-
-  defp reverse_and_flatten(acc) do
-    Enum.reduce(acc, %{}, fn {k, v}, acc -> Map.put(acc, k, :lists.reverse(List.flatten(v))) end)
   end
 end

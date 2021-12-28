@@ -10,6 +10,7 @@ Scidata currently supports the following training and test datasets:
 - IMDb Reviews
 - Kuzushiji-MNIST (KMNIST)
 - MNIST
+- SQuAD
 - Yelp Reviews (Full and Polarity)
 
 Download or fetch datasets locally:

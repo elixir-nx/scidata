@@ -46,7 +46,11 @@ defmodule Scidata.MixProject do
   defp docs do
     [
       source_ref: "v#{@version}",
-      source_url: @repo_url
+      source_url: @repo_url,
+      groups_for_modules: [
+        "Text": [Scidata.IMDBReviews, Scidata.Squad, Scidata.YelpFullReviews, Scidata.YelpPolarityReviews],
+        "Vision": [Scidata.CIFAR10, Scidata.CIFAR100, Scidata.FashionMNIST, Scidata.KuzushijiMNIST, Scidata.MNIST]
+      ]
     ]
   end
 end

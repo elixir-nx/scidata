@@ -79,7 +79,7 @@ defmodule Scidata.Squad do
   end
 
   @doc """
-  Convert result of `download/0` or `download_test/0` to map for use with `Explorer.DataFrame`.
+  Convert result of `download/0` or `download_test/0` to map for use with [Explorer.DataFrame](https://github.com/elixir-nx/explorer).
 
   ## Examples
 

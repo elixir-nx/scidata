@@ -1,7 +1,7 @@
 defmodule Scidata.MixProject do
   use Mix.Project
 
-  @version "0.1.3"
+  @version "0.1.4"
   @repo_url "https://github.com/elixir-nx/scidata"
 
   def project do

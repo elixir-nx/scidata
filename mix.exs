@@ -31,7 +31,8 @@ defmodule Scidata.MixProject do
   defp deps do
     [
       {:ex_doc, ">= 0.24.0", only: :dev, runtime: false},
-      {:nimble_csv, "~> 1.1"}
+      {:nimble_csv, "~> 1.1"},
+      {:jason, "~> 1.0"}
     ]
   end
 

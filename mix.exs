@@ -32,7 +32,9 @@ defmodule Scidata.MixProject do
     [
       {:ex_doc, ">= 0.24.0", only: :dev, runtime: false},
       {:nimble_csv, "~> 1.1"},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:evision, "~> 0.1.0-dev", github: "cocoa-xu/evision", branch: "main"}
+
     ]
   end
 

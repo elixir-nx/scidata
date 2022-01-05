@@ -111,8 +111,10 @@ defmodule Scidata.Caltech101 do
     wild_cat: 99,
     windsor_chair: 100,
     wrench: 101,
-    yin_yang: 102,
+    yin_yang: 102
   }
+
+  @labels_shape {9145, 1}
 
   @doc """
   Downloads the Caltech101 training dataset or fetches it locally.
@@ -145,7 +147,6 @@ defmodule Scidata.Caltech101 do
     download_dataset(:train)
   end
 
-
   defp parse_images(fname) do
     {:ok, mat} = fname |> List.to_string() |> OpenCV.imread()
     {:ok, {rows, cols, channels}} = OpenCV.Mat.shape(mat)
@@ -153,29 +154,33 @@ defmodule Scidata.Caltech101 do
     {binary_data, rows, cols, channels}
   end
 
-  defp download_dataset(dataset_type) do
+  defp generate_records(fname) do
+    label =
+      fname
+      |> List.to_string()
+      |> String.split("/")
+      |> Enum.at(1)
+      |> String.downcase()
+      |> String.to_atom()
+      |> (&Map.get(@label_mapping, &1)).()
+
+    {image, rows, cols, channels} = parse_images(fname)
+
+    {image, label, {rows, cols, channels}}
+  end
+
+  defp download_dataset(_dataset_type) do
     files = Utils.get!(@base_url).body
-    records = 
+
+    records =
       files
-      |> Enum.map(fn {fname, _image} ->
-        label = 
-          fname
-          |> List.to_string()
-          |> String.split("/")
-          |> Enum.at(1)
-          |> String.downcase()
-          |> String.to_atom
-          |> (&Map.get(@label_mapping, &1)).()
-        {image, rows, cols, channels} = parse_images(fname)
-        
-        {image, label, {rows, cols, channels}}
-      end)
+      |> Enum.map(fn {fname, _image} -> Task.async(fn -> generate_records(fname) end) end)
+      |> Enum.map(&Task.await(&1, :infinity))
+
     images = Enum.map(records, fn record -> elem(record, 0) end)
     labels = Enum.map(records, fn record -> elem(record, 1) end)
     shapes = Enum.map(records, fn record -> elem(record, 2) end)
 
-    labels = IO.iodata_to_binary(labels)
-
-    {{images, {:u, 8}, shapes}, {labels, {:u, 8}}}
+    {{images, {:u, 8}, shapes}, {labels, {:u, 8}, @labels_shape}}
   end
 end

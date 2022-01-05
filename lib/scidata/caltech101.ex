@@ -6,7 +6,7 @@ defmodule Scidata.Caltech101 do
   require Scidata.Utils
   alias Scidata.Utils
 
-  # NOTE: The original url on the website is "https://drive.google.com/u/0/uc?export=download&confirm=R4MY&id=137RyRjvTBkBiIfeYBNZBtViDHQ6_Ewsp". 
+  # NOTE: The original url on the website is "https://drive.google.com/u/0/uc?export=download&confirm=R4MY&id=137RyRjvTBkBiIfeYBNZBtViDHQ6_Ewsp".
   # However, I was unable to get around the redirection issue when downloading large files from GDrive.
   @base_url "https://s3.amazonaws.com/fast-ai-imageclas/caltech_101.tgz"
   @label_mapping %{
@@ -143,7 +143,7 @@ defmodule Scidata.Caltech101 do
     {binary_data, rows, cols, channels}
   end
 
-  defp generate_records(fname) do
+  defp generate_records({fname, _image}) do
     label =
       fname
       |> List.to_string()
@@ -163,12 +163,14 @@ defmodule Scidata.Caltech101 do
 
     records =
       files
-      |> Enum.map(fn {fname, _image} -> Task.async(fn -> generate_records(fname) end) end)
-      |> Enum.map(&Task.await(&1, :infinity))
+      |> Task.async_stream(&generate_records/1,
+        max_concurrency: Application.get_env(:scidata, :max_concurrency)
+      )
+      |> Enum.to_list()
 
-    images = Enum.map(records, fn record -> elem(record, 0) end)
-    labels = Enum.map(records, fn record -> elem(record, 1) end)
-    shapes = Enum.map(records, fn record -> elem(record, 2) end)
+    images = Enum.map(records, fn {:ok, record} -> elem(record, 0) end)
+    labels = Enum.map(records, fn {:ok, record} -> elem(record, 1) end)
+    shapes = Enum.map(records, fn {:ok, record} -> elem(record, 2) end)
 
     {{images, {:u, 8}, shapes}, {labels, {:u, 8}, @labels_shape}}
   end

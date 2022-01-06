@@ -4,6 +4,7 @@
 
 Scidata currently supports the following training and test datasets:
 
+- Caltech101
 - CIFAR10
 - CIFAR100
 - FashionMNIST

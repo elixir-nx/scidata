@@ -49,7 +49,7 @@ defmodule Scidata.Caltech101 do
     labels = Enum.map(records, fn {:ok, record} -> elem(record, 1) end)
     shapes = Enum.map(records, fn {:ok, record} -> elem(record, 2) end)
 
-    {{images, {:u, 8}, shapes}, {labels, {:u, 8}, @labels_shape}}
+    {{images, {:u, 8}, shapes}, {IO.iodata_to_binary(labels), {:u, 8}, @labels_shape}}
   end
 
   defp get_mapping(:label) do

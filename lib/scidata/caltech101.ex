@@ -35,12 +35,11 @@ defmodule Scidata.Caltech101 do
     # Skip first file since it's a temporary file.
     [_ | files] = Utils.get!(@base_url).body
 
-    {:ok, label_mapping} = get_mapping(:label)
-    {:ok, image_mapping} = get_mapping(:image)
+    {:ok, label_mapping} = get_mapping()
 
     records =
       files
-      |> Task.async_stream(&generate_records(&1, label_mapping, image_mapping),
+      |> Task.async_stream(&generate_records(&1, label_mapping),
         max_concurrency: Application.get_env(:scidata, :max_concurrency)
       )
       |> Enum.to_list()
@@ -52,13 +51,8 @@ defmodule Scidata.Caltech101 do
     {{images, {:u, 8}, shapes}, {IO.iodata_to_binary(labels), {:u, 8}, @labels_shape}}
   end
 
-  defp get_mapping(:label) do
-    fpath = Path.join([File.cwd!(), "lib/scidata/labels/caltech101_labels.json"])
-    do_get_mapping(fpath)
-  end
-
-  defp get_mapping(:image) do
-    fpath = Path.join([File.cwd!(), "lib/scidata/content/caltech101_image_shapes.json"])
+  defp get_mapping() do
+    fpath = Path.join([:code.priv_dir(:scidata), "labels/caltech101_labels.json"])
     do_get_mapping(fpath)
   end
 
@@ -68,16 +62,17 @@ defmodule Scidata.Caltech101 do
          do: {:ok, mapping}
   end
 
-  defp generate_records({fname, image}, label_mapping, image_mapping) do
-    [_, class_name, image_fname] =
+  defp generate_records({fname, image}, label_mapping) do
+    class_name =
       fname
       |> List.to_string()
       |> String.downcase()
       |> String.split("/")
+      |> Enum.at(1)
 
     label = Map.get(label_mapping, class_name)
-    shape = image_mapping |> Map.get("#{label}/#{image_fname}") |> List.to_tuple()
+    {:ok, image_bin, image_shape, _img_type} = ImgDecode.from_memory(image)
 
-    {image, label, shape}
+    {image_bin, label, image_shape}
   end
 end

@@ -8,9 +8,8 @@ defmodule Caltech101Test do
       {{_images, {:u, 8}, shapes}, {labels, {:u, 8}, labels_shape}} =
         Scidata.Caltech101.download()
 
-      assert length(labels) == elem(labels_shape, 0)
       assert length(shapes) == elem(labels_shape, 0)
-      assert labels |> Enum.uniq() |> length() == 102
+      assert byte_size(labels) == elem(labels_shape, 0)
     end
   end
 end

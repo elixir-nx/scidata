@@ -162,7 +162,7 @@ defmodule Scidata.Caltech101 do
       |> Enum.at(1)
       |> String.to_atom()
 
-    label = Map.get(@label_mapping, class_name)
+    label = Map.fetch!(@label_mapping, class_name)
     {:ok, image_bin, image_shape, _img_type} = ImgDecode.from_memory(image)
 
     {image_bin, label, image_shape}

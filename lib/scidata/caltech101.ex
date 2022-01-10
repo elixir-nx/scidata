@@ -132,6 +132,9 @@ defmodule Scidata.Caltech101 do
 
   """
   def download(opts \\ []) do
+    unless Code.ensure_loaded?(ImgDecode) do
+      raise "ImgDecode is missing, please add `{:img_decode, \"~> 0.1\"}` as a dependency to your mix.exs"
+    end
     download_dataset(:train, opts)
   end
 

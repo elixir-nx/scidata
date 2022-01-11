@@ -166,7 +166,7 @@ defmodule Scidata.Caltech101 do
       |> String.to_atom()
 
     label = Map.fetch!(@label_mapping, class_name)
-    {:ok, image_bin, image_shape, _img_type} = ImgDecode.from_memory(image)
+    {:ok, image_bin, image_shape, _img_type} = StbImage.from_memory(image)
 
     {image_bin, label, image_shape}
   end

@@ -135,6 +135,7 @@ defmodule Scidata.Caltech101 do
     unless Code.ensure_loaded?(StbImage) do
       raise "StbImage is missing, please add `{:stb_image, \"~> 0.1\"}` as a dependency to your mix.exs"
     end
+
     download_dataset(:train, opts)
   end
 
@@ -145,7 +146,7 @@ defmodule Scidata.Caltech101 do
     records =
       files
       |> Task.async_stream(&generate_records/1,
-        max_concurrency: Keyword.get(opts, :max_concurrency, System.schedulers_online)
+        max_concurrency: Keyword.get(opts, :max_concurrency, System.schedulers_online())
       )
       |> Enum.to_list()
 

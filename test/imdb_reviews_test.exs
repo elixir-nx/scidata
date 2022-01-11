@@ -5,8 +5,7 @@ defmodule IMDBReviewsTest do
 
   describe "download" do
     test "retrieves training set" do
-      %{review: train_inputs, sentiment: train_targets} =
-        Scidata.IMDBReviews.download()
+      %{review: train_inputs, sentiment: train_targets} = Scidata.IMDBReviews.download()
 
       assert length(train_inputs) == 25000
       assert length(train_targets) == 25000

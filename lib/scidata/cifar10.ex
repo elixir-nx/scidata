@@ -85,7 +85,9 @@ defmodule Scidata.CIFAR10 do
     images = IO.iodata_to_binary(images)
     labels = IO.iodata_to_binary(labels)
 
-    {{images, {:u, 8}, if(dataset_type == :test, do: @test_images_shape, else: @train_images_shape)},
-     {labels, {:u, 8}, if(dataset_type == :test, do: @test_labels_shape, else: @train_labels_shape)}}
+    {{images, {:u, 8},
+      if(dataset_type == :test, do: @test_images_shape, else: @train_images_shape)},
+     {labels, {:u, 8},
+      if(dataset_type == :test, do: @test_labels_shape, else: @train_labels_shape)}}
   end
 end

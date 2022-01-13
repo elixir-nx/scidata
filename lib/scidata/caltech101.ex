@@ -6,8 +6,6 @@ defmodule Scidata.Caltech101 do
   require Scidata.Utils
   alias Scidata.Utils
 
-  # NOTE: The original url on the website is "https://drive.google.com/u/0/uc?export=download&confirm=R4MY&id=137RyRjvTBkBiIfeYBNZBtViDHQ6_Ewsp".
-  # However, I was unable to get around the redirection issue when downloading large files from GDrive.
   @base_url "https://s3.amazonaws.com/fast-ai-imageclas/caltech_101.tgz"
   @labels_shape {9144, 1}
   @label_mapping %{
@@ -167,7 +165,7 @@ defmodule Scidata.Caltech101 do
       |> String.to_atom()
 
     label = Map.fetch!(@label_mapping, class_name)
-    {:ok, image_bin, image_shape, _img_type} = StbImage.from_memory(image)
+    {:ok, image_bin, image_shape, _img_type, _img_channels} = StbImage.from_memory(image)
 
     {image_bin, label, image_shape}
   end

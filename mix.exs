@@ -32,7 +32,8 @@ defmodule Scidata.MixProject do
     [
       {:ex_doc, ">= 0.24.0", only: :dev, runtime: false},
       {:nimble_csv, "~> 1.1"},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:stb_image, "~> 0.1.0", github: "cocoa-xu/stb_image", optional: true}
     ]
   end
 
@@ -48,8 +49,20 @@ defmodule Scidata.MixProject do
       source_ref: "v#{@version}",
       source_url: @repo_url,
       groups_for_modules: [
-        "Text": [Scidata.IMDBReviews, Scidata.Squad, Scidata.YelpFullReviews, Scidata.YelpPolarityReviews],
-        "Vision": [Scidata.CIFAR10, Scidata.CIFAR100, Scidata.FashionMNIST, Scidata.KuzushijiMNIST, Scidata.MNIST]
+        Text: [
+          Scidata.IMDBReviews,
+          Scidata.Squad,
+          Scidata.YelpFullReviews,
+          Scidata.YelpPolarityReviews
+        ],
+        Vision: [
+          Scidata.Caltech101,
+          Scidata.CIFAR10,
+          Scidata.CIFAR100,
+          Scidata.FashionMNIST,
+          Scidata.KuzushijiMNIST,
+          Scidata.MNIST
+        ]
       ]
     ]
   end

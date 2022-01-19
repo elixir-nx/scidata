@@ -33,7 +33,7 @@ defmodule Scidata.MixProject do
       {:ex_doc, ">= 0.24.0", only: :dev, runtime: false},
       {:nimble_csv, "~> 1.1"},
       {:jason, "~> 1.0"},
-      {:stb_image, "~> 0.1.0", github: "cocoa-xu/stb_image", optional: true}
+      {:stb_image, "~> 0.1.2", optional: true}
     ]
   end
 

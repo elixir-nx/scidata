@@ -155,6 +155,8 @@ defmodule Scidata.Caltech101 do
     {{images, {:u, 8}, shapes}, {IO.iodata_to_binary(labels), {:u, 8}, @labels_shape}}
   end
 
+  @compile {:no_warn_undefined, StbImage}
+
   defp generate_records({fname, image}) do
     class_name =
       fname

@@ -32,13 +32,15 @@ defmodule IMDBReviewsTest do
       assert [0, 0, 0, 0, 0] = Enum.take(test_targets, -5)
     end
 
-    test "utilizes transform opts" do
-      clip = fn inputs -> Enum.map(inputs, &String.slice(&1, 0..20)) end
+    test "examples are expected" do
+      clip = fn example -> String.slice(example, 0..20) end
 
       %{review: reviews, sentiment: targets} =
         Scidata.IMDBReviews.download(example_types: [:pos], transform_inputs: clip)
 
-      assert Enum.take(reviews, 10) == [
+      clipped_reviews = reviews |> Enum.take(10) |> Enum.map(&clip.(&1))
+
+      assert clipped_reviews == [
                "The story centers aro",
                "'The Adventures Of Ba",
                "This film and it's se",

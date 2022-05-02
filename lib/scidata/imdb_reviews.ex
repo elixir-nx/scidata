@@ -10,37 +10,35 @@ defmodule Scidata.IMDBReviews do
 
   @type train_sentiment :: :pos | :neg | :unsup
   @type test_sentiment :: :pos | :neg
-  @type opts :: [
-          transform_inputs: ([binary, ...] -> any),
-          transform_labels: ([integer, ...] -> any)
-        ]
 
   @doc """
   Downloads the IMDB reviews training dataset or fetches it locally.
 
   `example_types` specifies which examples in the dataset should be returned
   according to each example's label: `:pos` for positive examples, `:neg` for
-  negative examples, and `:unsup` for unlabeled examples.
+  negative examples, and `:unsup` for unlabeled examples. If no `example_types`
+  are provided, `:pos` and `:neg` examples are fetched.
   """
-  @spec download(example_types: [test_sentiment]) :: %{review: [binary(), ...], sentiment: 1 | 0}
+  @spec download(example_types: [train_sentiment]) :: %{
+          review: [binary(), ...],
+          sentiment: [1 | 0 | nil]
+        }
   def download(opts \\ []), do: download_dataset(:train, opts)
 
   @doc """
   Downloads the IMDB reviews test dataset or fetches it locally.
 
-  `example_types` is the same argument in `download/2` but excludes `:unsup`
-  because all unlabeled examples are in the training set.
+  `example_types` is the same as in `download/2`, but `:unsup` is
+  unavailable because all unlabeled examples are in the training set.
   """
   @spec download_test(example_types: [test_sentiment]) :: %{
           review: [binary(), ...],
-          sentiment: 1 | 0
+          sentiment: [1 | 0]
         }
   def download_test(opts \\ []), do: download_dataset(:test, opts)
 
   defp download_dataset(dataset_type, opts) do
     example_types = opts[:example_types] || [:pos, :neg]
-    transform_inputs = opts[:transform_inputs] || (& &1)
-    transform_labels = opts[:transform_labels] || (& &1)
 
     files = Utils.get!(@base_url <> @dataset_file).body
     regex = ~r"#{dataset_type}/(#{Enum.join(example_types, "|")})/"
@@ -53,7 +51,7 @@ defmodule Scidata.IMDBReviews do
           {[contents | inputs], [get_label(fname) | labels]}
       end
 
-    %{review: transform_inputs.(inputs), sentiment: transform_labels.(labels)}
+    %{review: inputs, sentiment: labels}
   end
 
   defp get_label(fname) do

@@ -150,7 +150,7 @@ defmodule Scidata.Caltech101 do
       |> Enum.reduce(
         {[], [], []},
         fn {:ok, record}, {image_acc, shape_acc, label_acc} ->
-          {%StbImage{data: image_bin, shape: shape}, label} = record
+          {%{data: image_bin, shape: shape}, label} = record
           {[image_bin | image_acc], [shape | shape_acc], [label | label_acc]}
         end
       )

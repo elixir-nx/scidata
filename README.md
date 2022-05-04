@@ -55,7 +55,7 @@ batchd_labels =
 ```elixir
 def deps do
   [
-    {:scidata, "~> 0.1.5"}
+    {:scidata, "~> 0.1.6"}
   ]
 end
 ```
@@ -66,7 +66,7 @@ PRs are encouraged! Consider using [utils](https://github.com/elixir-nx/scidata/
 
 ## License
 
-Copyright (c) 2021 Tom Rutten
+Copyright (c) 2022 Tom Rutten
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

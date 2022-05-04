@@ -131,7 +131,7 @@ defmodule Scidata.Caltech101 do
   """
   def download(opts \\ []) do
     unless Code.ensure_loaded?(StbImage) do
-      raise "StbImage is missing, please add `{:stb_image, \"~> 0.1\"}` as a dependency to your mix.exs"
+      raise "StbImage is missing, please add `{:stb_image, \"~> 0.4\"}` as a dependency to your mix.exs"
     end
 
     download_dataset(:train, opts)
@@ -141,16 +141,19 @@ defmodule Scidata.Caltech101 do
     # Skip first file since it's a temporary file.
     [_ | files] = Utils.get!(@base_url).body
 
-    records =
+    {images, shapes, labels} =
       files
+      |> Enum.reverse()
       |> Task.async_stream(&generate_records/1,
         max_concurrency: Keyword.get(opts, :max_concurrency, System.schedulers_online())
       )
-      |> Enum.to_list()
-
-    images = Enum.map(records, fn {:ok, record} -> elem(record, 0) end)
-    labels = Enum.map(records, fn {:ok, record} -> elem(record, 1) end)
-    shapes = Enum.map(records, fn {:ok, record} -> elem(record, 2) end)
+      |> Enum.reduce(
+        {[], [], []},
+        fn {:ok, record}, {image_acc, shape_acc, label_acc} ->
+          {%StbImage{data: image_bin, shape: shape}, label} = record
+          {[image_bin | image_acc], [shape | shape_acc], [label | label_acc]}
+        end
+      )
 
     {{images, {:u, 8}, shapes}, {IO.iodata_to_binary(labels), {:u, 8}, @labels_shape}}
   end
@@ -167,8 +170,8 @@ defmodule Scidata.Caltech101 do
       |> String.to_atom()
 
     label = Map.fetch!(@label_mapping, class_name)
-    {:ok, image_bin, image_shape, _img_type, _img_channels} = StbImage.from_memory(image)
+    {:ok, stb_image} = StbImage.from_binary(image)
 
-    {image_bin, label, image_shape}
+    {stb_image, label}
   end
 end

@@ -28,6 +28,13 @@ defmodule Scidata.CIFAR100 do
       |> Nx.new_axis(-1)
       |> Nx.equal(Nx.tensor(Enum.to_list(0..9)))
 
+  ## Options.
+
+    * `:base_url` - optional. Dataset base URL.
+      Defaults to `"https://www.cs.toronto.edu/~kriz/"`
+    * `:dataset_file` - optional. Dataset filename.
+      Defaults to `"cifar-100-binary.tar.gz"`
+
   ## Examples
 
       iex> Scidata.CIFAR100.download()

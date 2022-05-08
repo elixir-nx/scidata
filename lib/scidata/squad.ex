@@ -13,6 +13,13 @@ defmodule Scidata.Squad do
   @doc """
   Downloads the SQuAD training dataset
 
+  ## Options.
+
+    * `:base_url` - optional. Dataset base URL.
+      Defaults to `"https://rajpurkar.github.io/SQuAD-explorer/dataset/"`
+    * `:train_dataset_file` - optional. Training set filename.
+      Defaults to `"train-v1.1.json"`
+
   ## Examples
 
       iex> Scidata.Squad.download()
@@ -41,6 +48,13 @@ defmodule Scidata.Squad do
 
   @doc """
   Downloads the SQuAD test dataset
+
+  ## Options.
+
+    * `:base_url` - optional. Dataset base URL.
+      Defaults to `"https://rajpurkar.github.io/SQuAD-explorer/dataset/"`
+    * `:test_dataset_file` - optional. Test set filename.
+      Defaults to `"dev-v1.1.json"`
 
   ## Examples
 

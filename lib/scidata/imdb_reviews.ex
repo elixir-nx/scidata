@@ -18,6 +18,14 @@ defmodule Scidata.IMDBReviews do
   according to each example's label: `:pos` for positive examples, `:neg` for
   negative examples, and `:unsup` for unlabeled examples. If no `example_types`
   are provided, `:pos` and `:neg` examples are fetched.
+
+  ## Options.
+
+    * `:base_url` - optional. Dataset base URL.
+      Defaults to `"http://ai.stanford.edu/~amaas/data/sentiment/"`
+    * `:dataset_file` - optional. Dataset filename.
+      Defaults to `"aclImdb_v1.tar.gz"`
+
   """
   @spec download(example_types: [train_sentiment]) :: %{
           review: [binary(), ...],
@@ -30,6 +38,14 @@ defmodule Scidata.IMDBReviews do
 
   `example_types` is the same as in `download/2`, but `:unsup` is
   unavailable because all unlabeled examples are in the training set.
+
+  ## Options.
+
+    * `:base_url` - optional. Dataset base URL.
+      Defaults to `"http://ai.stanford.edu/~amaas/data/sentiment/"`
+    * `:dataset_file` - optional. Dataset filename.
+      Defaults to `"aclImdb_v1.tar.gz"`
+
   """
   @spec download_test(example_types: [test_sentiment]) :: %{
           review: [binary(), ...],

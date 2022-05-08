@@ -12,12 +12,28 @@ defmodule Scidata.YelpFullReviews do
 
   @doc """
   Downloads the Yelp Reviews training dataset or fetches it locally.
+
+  ## Options.
+
+    * `:base_url` - optional. Dataset base URL.
+      Defaults to `"https://s3.amazonaws.com/fast-ai-nlp/"`
+    * `:dataset_file` - optional. Dataset filename.
+      Defaults to `"yelp_review_full_csv.tgz"`
+
   """
   @spec download(Keyword.t()) :: %{review: [binary(), ...], rating: [5 | 4 | 3 | 2 | 1]}
   def download(opts \\ []), do: download_dataset(:train, opts)
 
   @doc """
   Downloads the Yelp Reviews test dataset or fetches it locally.
+
+  ## Options.
+
+    * `:base_url` - optional. Dataset base URL.
+      Defaults to `"https://s3.amazonaws.com/fast-ai-nlp/"`
+    * `:dataset_file` - optional. Dataset filename.
+      Defaults to `"yelp_review_full_csv.tgz"`
+
   """
   @spec download_test(Keyword.t()) :: %{
           review: [binary(), ...],

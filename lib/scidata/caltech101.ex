@@ -138,8 +138,10 @@ defmodule Scidata.Caltech101 do
   end
 
   defp download_dataset(_dataset_type, opts) do
+    base_url = opts[:base_url] || @base_url
+
     # Skip first file since it's a temporary file.
-    [_ | files] = Utils.get!(@base_url).body
+    [_ | files] = Utils.get!(base_url).body
 
     {images, shapes, labels} =
       files

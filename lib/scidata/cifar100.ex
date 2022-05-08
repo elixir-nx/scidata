@@ -65,7 +65,10 @@ defmodule Scidata.CIFAR100 do
   end
 
   defp download_dataset(dataset_type) do
-    files = Utils.get!(@base_url <> @dataset_file).body
+    base_url = opts[:base_url] || @base_url
+    dataset_file = opts[:dataset_file] || @dataset_file
+
+    files = Utils.get!(base_url <> dataset_file).body
 
     {images, labels} =
       files

@@ -13,20 +13,23 @@ defmodule Scidata.YelpFullReviews do
   @doc """
   Downloads the Yelp Reviews training dataset or fetches it locally.
   """
-  @spec download() :: %{review: [binary(), ...], rating: [5 | 4 | 3 | 2 | 1]}
-  def download(), do: download_dataset(:train)
+  @spec download(Keyword.t()) :: %{review: [binary(), ...], rating: [5 | 4 | 3 | 2 | 1]}
+  def download(opts \\ []), do: download_dataset(:train, opts)
 
   @doc """
   Downloads the Yelp Reviews test dataset or fetches it locally.
   """
-  @spec download_test() :: %{
+  @spec download_test(Keyword.t()) :: %{
           review: [binary(), ...],
           rating: [5 | 4 | 3 | 2 | 1]
         }
-  def download_test(), do: download_dataset(:test)
+  def download_test(opts \\ []), do: download_dataset(:test, opts)
 
-  defp download_dataset(dataset_type) do
-    files = Utils.get!(@base_url <> @dataset_file).body
+  defp download_dataset(dataset_type, opts) do
+    base_url = opts[:base_url] || @base_url
+    dataset_file = opts[:dataset_file] || @dataset_file
+
+    files = Utils.get!(base_url <> dataset_file).body
     regex = ~r"#{dataset_type}"
 
     records =

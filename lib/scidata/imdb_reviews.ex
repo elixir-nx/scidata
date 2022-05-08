@@ -39,8 +39,10 @@ defmodule Scidata.IMDBReviews do
 
   defp download_dataset(dataset_type, opts) do
     example_types = opts[:example_types] || [:pos, :neg]
+    base_url = opts[:base_url] || @base_url
+    dataset_file = opts[:dataset_file] || @dataset_file
 
-    files = Utils.get!(@base_url <> @dataset_file).body
+    files = Utils.get!(base_url <> dataset_file).body
     regex = ~r"#{dataset_type}/(#{Enum.join(example_types, "|")})/"
 
     {inputs, labels} =

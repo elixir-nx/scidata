@@ -40,25 +40,45 @@ defmodule Scidata.FashionMNIST do
         {3739854681}}}
 
   """
-  def download() do
-    {download_images(@train_image_file), download_labels(@train_label_file)}
+  def download(opts \\ []) do
+    {download_images(:train, opts), download_labels(:train, opts)}
   end
 
   @doc """
   Downloads the FashionMNIST test dataset or fetches it locally.
   """
-  def download_test() do
-    {download_images(@test_image_file), download_labels(@test_label_file)}
+  def download_test(opts \\ []) do
+    {download_images(:test, opts), download_labels(:test, opts)}
   end
 
-  defp download_images(image_file) do
-    data = Utils.get!(@base_url <> image_file).body
+  defp download_images(:train, opts) do
+    download_images(opts[:train_image_file] || @train_image_file)
+  end
+
+  defp download_images(:test, opts) do
+    download_images(opts[:test_image_file] || @test_image_file)
+  end
+
+  defp download_images(filename, opts) do
+    base_url = opts[:base_url] || @base_url
+
+    data = Utils.get!(base_url <> filename).body
     <<_::32, n_images::32, n_rows::32, n_cols::32, images::binary>> = data
     {images, {:u, 8}, {n_images, 1, n_rows, n_cols}}
   end
 
-  defp download_labels(label_file) do
-    data = Utils.get!(@base_url <> label_file).body
+  defp download_labels(:train, opts) do
+    download_labels(opts[:train_label_file] || @train_label_file)
+  end
+
+  defp download_labels(:test, opts) do
+    download_labels(opts[:test_label_file] || @test_label_file)
+  end
+
+  defp download_labels(filename, opts) do
+    base_url = opts[:base_url] || @base_url
+
+    data = Utils.get!(base_url <> filename).body
     <<_::32, n_labels::32, labels::binary>> = data
     {labels, {:u, 8}, {n_labels}}
   end

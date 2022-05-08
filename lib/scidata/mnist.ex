@@ -39,11 +39,11 @@ defmodule Scidata.MNIST do
   end
 
   defp download_images(:train, opts) do
-    download_images(opts[:train_image_file] || @train_image_file)
+    download_images(opts[:train_image_file] || @train_image_file, opts)
   end
 
   defp download_images(:test, opts) do
-    download_images(opts[:test_image_file] || @test_image_file)
+    download_images(opts[:test_image_file] || @test_image_file, opts)
   end
 
   defp download_images(filename, opts) do
@@ -55,11 +55,11 @@ defmodule Scidata.MNIST do
   end
 
   defp download_labels(:train, opts) do
-    download_labels(opts[:train_label_file] || @train_label_file)
+    download_labels(opts[:train_label_file] || @train_label_file, opts)
   end
 
   defp download_labels(:test, opts) do
-    download_labels(opts[:test_label_file] || @test_label_file)
+    download_labels(opts[:test_label_file] || @test_label_file, opts)
   end
 
   defp download_labels(filename, opts) do

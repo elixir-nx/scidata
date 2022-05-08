@@ -40,8 +40,8 @@ defmodule Scidata.CIFAR10 do
         {:u, 8}, {50000}}}
 
   """
-  def download() do
-    download_dataset(:train)
+  def download(opts \\ []) do
+    download_dataset(:train, opts)
   end
 
   @doc """
@@ -49,8 +49,8 @@ defmodule Scidata.CIFAR10 do
 
   Accepts the same options as `download/1`.
   """
-  def download_test() do
-    download_dataset(:test)
+  def download_test(opts \\ []) do
+    download_dataset(:test, opts)
   end
 
   defp parse_images(content) do
@@ -64,7 +64,7 @@ defmodule Scidata.CIFAR10 do
     {Enum.reverse(images), Enum.reverse(labels)}
   end
 
-  defp download_dataset(dataset_type) do
+  defp download_dataset(dataset_type, opts) do
     base_url = opts[:base_url] || @base_url
     dataset_file = opts[:dataset_file] || @dataset_file
 

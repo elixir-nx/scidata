@@ -19,6 +19,8 @@ defmodule Scidata.YelpPolarityReviews do
       Defaults to `"https://s3.amazonaws.com/fast-ai-nlp/"`
     * `:dataset_file` - optional. Dataset filename.
       Defaults to `"yelp_review_polarity_csv.tgz"`
+    * `:cache_dir` - optional. Cache directory.
+      Defaults to `System.tmp_dir!()`
 
   """
   @spec download(Keyword.t()) :: %{review: [binary(), ...], sentiment: [1 | 0]}
@@ -33,6 +35,8 @@ defmodule Scidata.YelpPolarityReviews do
       Defaults to `"https://s3.amazonaws.com/fast-ai-nlp/"`
     * `:dataset_file` - optional. Dataset filename.
       Defaults to `"yelp_review_polarity_csv.tgz"`
+    * `:cache_dir` - optional. Cache directory.
+      Defaults to `System.tmp_dir!()`
 
   """
   @spec download_test(Keyword.t()) :: %{
@@ -45,7 +49,7 @@ defmodule Scidata.YelpPolarityReviews do
     base_url = opts[:base_url] || @base_url
     dataset_file = opts[:dataset_file] || @dataset_file
 
-    files = Utils.get!(base_url <> dataset_file).body
+    files = Utils.get!(base_url <> dataset_file, opts).body
     regex = ~r"#{dataset_type}"
 
     records =

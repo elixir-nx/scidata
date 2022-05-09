@@ -38,6 +38,8 @@ defmodule Scidata.MNIST do
       Defaults to `"test-images-idx3-ubyte.gz"`
     * `:test_label_file` - optional. Test set label filename.
       Defaults to `"test-labels-idx1-ubyte.gz"`
+    * `:cache_dir` - optional. Cache directory.
+      Defaults to `System.tmp_dir!()`
 
   """
   def download(opts \\ []) do
@@ -62,7 +64,7 @@ defmodule Scidata.MNIST do
   defp download_images(filename, opts) do
     base_url = opts[:base_url] || @base_url
 
-    data = Utils.get!(base_url <> filename).body
+    data = Utils.get!(base_url <> filename, opts).body
     <<_::32, n_images::32, n_rows::32, n_cols::32, images::binary>> = data
     {images, {:u, 8}, {n_images, 1, n_rows, n_cols}}
   end
@@ -78,7 +80,7 @@ defmodule Scidata.MNIST do
   defp download_labels(filename, opts) do
     base_url = opts[:base_url] || @base_url
 
-    data = Utils.get!(base_url <> filename).body
+    data = Utils.get!(base_url <> filename, opts).body
     <<_::32, n_labels::32, labels::binary>> = data
     {labels, {:u, 8}, {n_labels}}
   end

@@ -34,6 +34,8 @@ defmodule Scidata.CIFAR100 do
       Defaults to `"https://www.cs.toronto.edu/~kriz/"`
     * `:dataset_file` - optional. Dataset filename.
       Defaults to `"cifar-100-binary.tar.gz"`
+    * `:cache_dir` - optional. Cache directory.
+      Defaults to `System.tmp_dir!()`
 
   ## Examples
 
@@ -75,7 +77,7 @@ defmodule Scidata.CIFAR100 do
     base_url = opts[:base_url] || @base_url
     dataset_file = opts[:dataset_file] || @dataset_file
 
-    files = Utils.get!(base_url <> dataset_file).body
+    files = Utils.get!(base_url <> dataset_file, opts).body
 
     {images, labels} =
       files

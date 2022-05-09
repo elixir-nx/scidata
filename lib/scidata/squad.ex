@@ -19,6 +19,8 @@ defmodule Scidata.Squad do
       Defaults to `"https://rajpurkar.github.io/SQuAD-explorer/dataset/"`
     * `:train_dataset_file` - optional. Training set filename.
       Defaults to `"train-v1.1.json"`
+    * `:cache_dir` - optional. Cache directory.
+      Defaults to `System.tmp_dir!()`
 
   ## Examples
 
@@ -55,6 +57,8 @@ defmodule Scidata.Squad do
       Defaults to `"https://rajpurkar.github.io/SQuAD-explorer/dataset/"`
     * `:test_dataset_file` - optional. Test set filename.
       Defaults to `"dev-v1.1.json"`
+    * `:cache_dir` - optional. Cache directory.
+      Defaults to `System.tmp_dir!()`
 
   ## Examples
 
@@ -88,7 +92,7 @@ defmodule Scidata.Squad do
     base_url = opts[:base_url] || @base_url
 
     content =
-      Utils.get!(base_url <> dataset_name).body
+      Utils.get!(base_url <> dataset_name, opts).body
       |> Jason.decode!()
 
     content["data"]

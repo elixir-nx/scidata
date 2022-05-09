@@ -1,23 +1,23 @@
 defmodule Scidata.Utils do
   @moduledoc false
 
-  def get!(url) do
+  def get!(url, opts \\ []) do
     request = %{
       url: url,
       headers: []
     }
 
     request
-    |> if_modified_since()
+    |> if_modified_since(opts)
     |> run!()
     |> raise_errors()
-    |> handle_cache()
+    |> handle_cache(opts)
     |> decode()
     |> elem(1)
   end
 
-  defp if_modified_since(request) do
-    case File.stat(cache_path(request)) do
+  defp if_modified_since(request, opts) do
+    case File.stat(cache_path(request, opts)) do
       {:ok, stat} ->
         value = stat.mtime |> NaiveDateTime.from_erl!() |> format_http_datetime()
         update_in(request.headers, &[{'if-modified-since', String.to_charlist(value)} | &1])
@@ -71,8 +71,8 @@ defmodule Scidata.Utils do
     end
   end
 
-  defp handle_cache({request, response}) do
-    path = cache_path(request)
+  defp handle_cache({request, response}, opts) do
+    path = cache_path(request, opts)
 
     if response.status == 304 do
       # Logger.debug(["loading cached ", path])
@@ -85,9 +85,10 @@ defmodule Scidata.Utils do
     end
   end
 
-  defp cache_path(request) do
+  defp cache_path(request, opts) do
     uri = URI.parse(request.url)
     path = Enum.join([uri.host, String.replace(uri.path, "/", "-")], "-")
-    Path.join(System.tmp_dir!(), path)
+    cache_dir = opts[:cache_dir] || System.tmp_dir!()
+    Path.join(cache_dir, path)
   end
 end

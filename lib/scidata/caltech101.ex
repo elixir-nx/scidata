@@ -135,6 +135,8 @@ defmodule Scidata.Caltech101 do
       Defaults to `"https://s3.amazonaws.com/fast-ai-imageclas/"`
     * `:dataset_file` - optional. Dataset filename.
       Defaults to `"caltech_101.tgz"`
+    * `:cache_dir` - optional. Cache directory.
+      Defaults to `System.tmp_dir!()`
 
   """
   def download(opts \\ []) do
@@ -150,7 +152,7 @@ defmodule Scidata.Caltech101 do
     dataset_file = opts[:dataset_file] || @dataset_file
 
     # Skip first file since it's a temporary file.
-    [_ | files] = Utils.get!(base_url <> dataset_file).body
+    [_ | files] = Utils.get!(base_url <> dataset_file, opts).body
 
     {images, shapes, labels} =
       files

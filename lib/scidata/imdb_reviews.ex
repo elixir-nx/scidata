@@ -25,6 +25,8 @@ defmodule Scidata.IMDBReviews do
       Defaults to `"http://ai.stanford.edu/~amaas/data/sentiment/"`
     * `:dataset_file` - optional. Dataset filename.
       Defaults to `"aclImdb_v1.tar.gz"`
+    * `:cache_dir` - optional. Cache directory.
+      Defaults to `System.tmp_dir!()`
 
   """
   @spec download(example_types: [train_sentiment]) :: %{
@@ -45,6 +47,8 @@ defmodule Scidata.IMDBReviews do
       Defaults to `"http://ai.stanford.edu/~amaas/data/sentiment/"`
     * `:dataset_file` - optional. Dataset filename.
       Defaults to `"aclImdb_v1.tar.gz"`
+    * `:cache_dir` - optional. Cache directory.
+      Defaults to `System.tmp_dir!()`
 
   """
   @spec download_test(example_types: [test_sentiment]) :: %{
@@ -58,7 +62,7 @@ defmodule Scidata.IMDBReviews do
     base_url = opts[:base_url] || @base_url
     dataset_file = opts[:dataset_file] || @dataset_file
 
-    files = Utils.get!(base_url <> dataset_file).body
+    files = Utils.get!(base_url <> dataset_file, opts).body
     regex = ~r"#{dataset_type}/(#{Enum.join(example_types, "|")})/"
 
     {inputs, labels} =

@@ -28,6 +28,8 @@ defmodule Scidata.IMDBReviews do
     * `:dataset_file` - Dataset filename.
 
       Defaults to `"aclImdb_v1.tar.gz"`
+    * `:cache_dir` - optional. Cache directory.
+      Defaults to `System.tmp_dir!()`
 
     * `:cache_dir` - Cache directory.
 

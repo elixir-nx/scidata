@@ -89,6 +89,7 @@ defmodule Scidata.Utils do
     uri = URI.parse(request.url)
     path = Enum.join([uri.host, String.replace(uri.path, "/", "-")], "-")
     cache_dir = opts[:cache_dir] || System.tmp_dir!()
+    File.mkdir_p!(cache_dir)
     Path.join(cache_dir, path)
   end
 end

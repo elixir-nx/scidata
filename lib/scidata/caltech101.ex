@@ -143,10 +143,6 @@ defmodule Scidata.Caltech101 do
 
       Defaults to `System.tmp_dir!()`
 
-    * `:cache_dir` - Cache directory.
-
-      Defaults to `System.tmp_dir!()`
-
   """
   def download(opts \\ []) do
     unless Code.ensure_loaded?(StbImage) do

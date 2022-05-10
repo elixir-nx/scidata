@@ -21,11 +21,11 @@ defmodule Scidata.IMDBReviews do
 
   ## Options.
 
-    * `:base_url` - optional. Dataset base URL.
+    * `:base_url` - Dataset base URL.
       Defaults to `"http://ai.stanford.edu/~amaas/data/sentiment/"`
-    * `:dataset_file` - optional. Dataset filename.
+    * `:dataset_file` - Dataset filename.
       Defaults to `"aclImdb_v1.tar.gz"`
-    * `:cache_dir` - optional. Cache directory.
+    * `:cache_dir` - Cache directory.
       Defaults to `System.tmp_dir!()`
 
   """
@@ -43,11 +43,11 @@ defmodule Scidata.IMDBReviews do
 
   ## Options.
 
-    * `:base_url` - optional. Dataset base URL.
+    * `:base_url` - Dataset base URL.
       Defaults to `"http://ai.stanford.edu/~amaas/data/sentiment/"`
-    * `:dataset_file` - optional. Dataset filename.
+    * `:dataset_file` - Dataset filename.
       Defaults to `"aclImdb_v1.tar.gz"`
-    * `:cache_dir` - optional. Cache directory.
+    * `:cache_dir` - Cache directory.
       Defaults to `System.tmp_dir!()`
 
   """

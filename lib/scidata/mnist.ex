@@ -28,17 +28,17 @@ defmodule Scidata.MNIST do
 
   ## Options.
 
-    * `:base_url` - optional. Dataset base URL.
+    * `:base_url` - Dataset base URL.
       Defaults to `"https://storage.googleapis.com/cvdf-datasets/mnist/"`
-    * `:train_image_file` - optional. Training set image filename.
+    * `:train_image_file` - Training set image filename.
       Defaults to `"train-images-idx3-ubyte.gz"`
-    * `:train_label_file` - optional. Training set label filename.
+    * `:train_label_file` - Training set label filename.
       Defaults to `"train-images-idx1-ubyte.gz"`
-    * `:test_image_file` - optional. Test set image filename.
+    * `:test_image_file` - Test set image filename.
       Defaults to `"test-images-idx3-ubyte.gz"`
-    * `:test_label_file` - optional. Test set label filename.
+    * `:test_label_file` - Test set label filename.
       Defaults to `"test-labels-idx1-ubyte.gz"`
-    * `:cache_dir` - optional. Cache directory.
+    * `:cache_dir` - Cache directory.
       Defaults to `System.tmp_dir!()`
 
   """

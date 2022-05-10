@@ -31,10 +31,15 @@ defmodule Scidata.CIFAR100 do
   ## Options.
 
     * `:base_url` - Dataset base URL.
+
       Defaults to `"https://www.cs.toronto.edu/~kriz/"`
+
     * `:dataset_file` - Dataset filename.
+
       Defaults to `"cifar-100-binary.tar.gz"`
+
     * `:cache_dir` - Cache directory.
+
       Defaults to `System.tmp_dir!()`
 
   ## Examples

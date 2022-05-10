@@ -29,15 +29,7 @@ defmodule Scidata.YelpPolarityReviews do
   @doc """
   Downloads the Yelp Polarity Reviews test dataset or fetches it locally.
 
-  ## Options.
-
-    * `:base_url` - Dataset base URL.
-      Defaults to `"https://s3.amazonaws.com/fast-ai-nlp/"`
-    * `:dataset_file` - Dataset filename.
-      Defaults to `"yelp_review_polarity_csv.tgz"`
-    * `:cache_dir` - Cache directory.
-      Defaults to `System.tmp_dir!()`
-
+  Accepts the same options as `download/1`.
   """
   @spec download_test(Keyword.t()) :: %{
           review: [binary(), ...],

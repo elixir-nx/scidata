@@ -22,10 +22,15 @@ defmodule Scidata.IMDBReviews do
   ## Options.
 
     * `:base_url` - Dataset base URL.
+
       Defaults to `"http://ai.stanford.edu/~amaas/data/sentiment/"`
+
     * `:dataset_file` - Dataset filename.
+
       Defaults to `"aclImdb_v1.tar.gz"`
+
     * `:cache_dir` - Cache directory.
+
       Defaults to `System.tmp_dir!()`
 
   """
@@ -38,18 +43,10 @@ defmodule Scidata.IMDBReviews do
   @doc """
   Downloads the IMDB reviews test dataset or fetches it locally.
 
-  `example_types` is the same as in `download/2`, but `:unsup` is
+  `example_types` is the same as in `download/1`, but `:unsup` is
   unavailable because all unlabeled examples are in the training set.
 
-  ## Options.
-
-    * `:base_url` - Dataset base URL.
-      Defaults to `"http://ai.stanford.edu/~amaas/data/sentiment/"`
-    * `:dataset_file` - Dataset filename.
-      Defaults to `"aclImdb_v1.tar.gz"`
-    * `:cache_dir` - Cache directory.
-      Defaults to `System.tmp_dir!()`
-
+  Accepts the same options as `download/1`.
   """
   @spec download_test(example_types: [test_sentiment]) :: %{
           review: [binary(), ...],

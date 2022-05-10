@@ -30,16 +30,19 @@ defmodule Scidata.FashionMNIST do
   ## Options.
 
     * `:base_url` - Dataset base URL.
+
       Defaults to `"http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/"`
+
     * `:train_image_file` - Training set image filename.
+
       Defaults to `"train-images-idx3-ubyte.gz"`
+
     * `:train_label_file` - Training set label filename.
+
       Defaults to `"train-images-idx1-ubyte.gz"`
-    * `:test_image_file` - Test set image filename.
-      Defaults to `"test-images-idx3-ubyte.gz"`
-    * `:test_label_file` - Test set label filename.
-      Defaults to `"test-labels-idx1-ubyte.gz"`
+
     * `:cache_dir` - Cache directory.
+
       Defaults to `System.tmp_dir!()`
 
   ## Examples
@@ -61,6 +64,25 @@ defmodule Scidata.FashionMNIST do
 
   @doc """
   Downloads the FashionMNIST test dataset or fetches it locally.
+
+  ## Options.
+
+    * `:base_url` - Dataset base URL.
+
+      Defaults to `"http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/"`
+
+    * `:test_image_file` - Test set image filename.
+
+      Defaults to `"t10k-images-idx3-ubyte.gz"`
+
+    * `:test_label_file` - Test set label filename.
+
+      Defaults to `"t10k-labels-idx1-ubyte.gz"`
+
+    * `:cache_dir` - Cache directory.
+
+      Defaults to `System.tmp_dir!()`
+
   """
   def download_test(opts \\ []) do
     {download_images(:test, opts), download_labels(:test, opts)}

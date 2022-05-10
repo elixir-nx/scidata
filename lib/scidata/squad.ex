@@ -16,10 +16,15 @@ defmodule Scidata.Squad do
   ## Options.
 
     * `:base_url` - Dataset base URL.
+
       Defaults to `"https://rajpurkar.github.io/SQuAD-explorer/dataset/"`
+
     * `:train_dataset_file` - Training set filename.
+
       Defaults to `"train-v1.1.json"`
+
     * `:cache_dir` - Cache directory.
+
       Defaults to `System.tmp_dir!()`
 
   ## Examples
@@ -54,10 +59,15 @@ defmodule Scidata.Squad do
   ## Options.
 
     * `:base_url` - Dataset base URL.
+
       Defaults to `"https://rajpurkar.github.io/SQuAD-explorer/dataset/"`
+
     * `:test_dataset_file` - Test set filename.
+
       Defaults to `"dev-v1.1.json"`
+
     * `:cache_dir` - Cache directory.
+
       Defaults to `System.tmp_dir!()`
 
   ## Examples

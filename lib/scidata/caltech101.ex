@@ -132,10 +132,15 @@ defmodule Scidata.Caltech101 do
   ## Options.
 
     * `:base_url` - Dataset base URL.
+
       Defaults to `"https://s3.amazonaws.com/fast-ai-imageclas/"`
+
     * `:dataset_file` - Dataset filename.
+
       Defaults to `"caltech_101.tgz"`
+
     * `:cache_dir` - Cache directory.
+
       Defaults to `System.tmp_dir!()`
 
   """

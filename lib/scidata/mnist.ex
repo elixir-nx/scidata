@@ -29,16 +29,19 @@ defmodule Scidata.MNIST do
   ## Options.
 
     * `:base_url` - Dataset base URL.
+
       Defaults to `"https://storage.googleapis.com/cvdf-datasets/mnist/"`
+
     * `:train_image_file` - Training set image filename.
+
       Defaults to `"train-images-idx3-ubyte.gz"`
+
     * `:train_label_file` - Training set label filename.
+
       Defaults to `"train-images-idx1-ubyte.gz"`
-    * `:test_image_file` - Test set image filename.
-      Defaults to `"test-images-idx3-ubyte.gz"`
-    * `:test_label_file` - Test set label filename.
-      Defaults to `"test-labels-idx1-ubyte.gz"`
+
     * `:cache_dir` - Cache directory.
+
       Defaults to `System.tmp_dir!()`
 
   """
@@ -48,6 +51,33 @@ defmodule Scidata.MNIST do
 
   @doc """
   Downloads the MNIST test dataset or fetches it locally.
+
+  ## Options.
+
+    * `:base_url` - Dataset base URL.
+
+      Defaults to `"https://storage.googleapis.com/cvdf-datasets/mnist/"`
+
+    * `:train_image_file` - Training set image filename.
+
+      Defaults to `"train-images-idx3-ubyte.gz"`
+
+    * `:train_label_file` - Training set label filename.
+
+      Defaults to `"train-images-idx1-ubyte.gz"`
+
+    * `:test_image_file` - Test set image filename.
+
+      Defaults to `"t10k-images-idx3-ubyte.gz"`
+
+    * `:test_label_file` - Test set label filename.
+
+      Defaults to `"t10k-labels-idx1-ubyte.gz"`
+
+    * `:cache_dir` - Cache directory.
+
+      Defaults to `System.tmp_dir!()`
+
   """
   def download_test(opts \\ []) do
     {download_images(:test, opts), download_labels(:test, opts)}

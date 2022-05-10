@@ -22,8 +22,6 @@ defmodule Scidata.YelpFullReviews do
     * `:dataset_file` - Dataset filename.
 
       Defaults to `"yelp_review_full_csv.tgz"`
-    * `:cache_dir` - optional. Cache directory.
-      Defaults to `System.tmp_dir!()`
 
     * `:cache_dir` - Cache directory.
 

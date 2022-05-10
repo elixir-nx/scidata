@@ -22,8 +22,6 @@ defmodule Scidata.Squad do
     * `:train_dataset_file` - Training set filename.
 
       Defaults to `"train-v1.1.json"`
-    * `:cache_dir` - optional. Cache directory.
-      Defaults to `System.tmp_dir!()`
 
     * `:cache_dir` - Cache directory.
 
@@ -67,8 +65,6 @@ defmodule Scidata.Squad do
     * `:test_dataset_file` - Test set filename.
 
       Defaults to `"dev-v1.1.json"`
-    * `:cache_dir` - optional. Cache directory.
-      Defaults to `System.tmp_dir!()`
 
     * `:cache_dir` - Cache directory.
 

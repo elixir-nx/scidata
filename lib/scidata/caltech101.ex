@@ -138,7 +138,9 @@ defmodule Scidata.Caltech101 do
     * `:dataset_file` - Dataset filename.
 
       Defaults to `"caltech_101.tgz"`
-    * `:cache_dir` - optional. Cache directory.
+
+    * `:cache_dir` - Cache directory.
+
       Defaults to `System.tmp_dir!()`
 
     * `:cache_dir` - Cache directory.

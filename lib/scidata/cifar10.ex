@@ -37,8 +37,6 @@ defmodule Scidata.CIFAR10 do
     * `:dataset_file` - Dataset filename.
 
       Defaults to `"cifar-10-binary.tar.gz"`
-    * `:cache_dir` - optional. Cache directory.
-      Defaults to `System.tmp_dir!()`
 
     * `:cache_dir` - Cache directory.
 

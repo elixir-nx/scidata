@@ -16,10 +16,15 @@ defmodule Scidata.YelpPolarityReviews do
   ## Options.
 
     * `:base_url` - Dataset base URL.
+
       Defaults to `"https://s3.amazonaws.com/fast-ai-nlp/"`
+
     * `:dataset_file` - Dataset filename.
+
       Defaults to `"yelp_review_polarity_csv.tgz"`
+
     * `:cache_dir` - Cache directory.
+
       Defaults to `System.tmp_dir!()`
 
   """

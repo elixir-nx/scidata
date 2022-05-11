@@ -59,22 +59,18 @@ defmodule Scidata.Wine do
       |> String.split()
       |> Enum.map(&String.split(&1, ","))
       |> Enum.map(fn row ->
-          [label | val_list] = row
-          {label, ""} = Integer.parse(label)
-          val_list =
-            Enum.map(val_list, fn val ->
-              {val, ""} =
-                case val do
-                  "." <> _other ->
-                    Float.parse("0" <> val)
+        [label | val_list] = row
+        label = String.to_integer(label)
 
-                  _ ->
-                    Float.parse(val)
-                end
-              val
-            end)
-          [label - 1 | val_list]
+        val_list =
+          Enum.map(val_list, fn val ->
+            {val, ""} = Float.parse("0" <> val)
+            val
+          end)
+
+        [label - 1 | val_list]
       end)
+
     labels = Enum.map(label_attr, &hd(&1))
     attributes = Enum.map(label_attr, &tl(&1))
     {attributes, labels}

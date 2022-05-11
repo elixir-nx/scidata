@@ -45,22 +45,22 @@ defmodule Scidata.Iris do
     base_url = opts[:base_url] || @base_url
     dataset_file = opts[:dataset_file] || @dataset_file
 
-    label_attr =
-      Utils.get!(base_url <> dataset_file, opts).body
-      |> String.split()
-      |> Enum.map(&String.split(&1, ","))
-      |> Enum.map(fn [sl, sw, pl, pw, label] ->
-          [sl, sw, pl, pw] =
-            Enum.map([sl, sw, pl, pw], fn val ->
-              {val, ""} = Float.parse(val)
-              val
-            end)
-          label = get_label(label)
-          [label, sl, sw, pl, pw]
-      end)
-    labels = Enum.map(label_attr, &hd(&1))
-    attributes = Enum.map(label_attr, &tl(&1))
-    {attributes, labels}
+    Utils.get!(base_url <> dataset_file, opts).body
+    |> String.split()
+    |> Enum.reverse()
+    |> Enum.reduce({[], []}, fn row_str, {feature_acc, label_acc} ->
+      row = String.split(row_str, ",")
+      {features, [label]} = Enum.split(row, 4)
+
+      features =
+        Enum.map(features, fn val ->
+          {val, ""} = Float.parse(val)
+          val
+        end)
+
+      label = get_label(label)
+      {[features | feature_acc], [label | label_acc]}
+    end)
   end
 
   defp get_label(label) do

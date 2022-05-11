@@ -13,6 +13,20 @@ defmodule Scidata.Squad do
   @doc """
   Downloads the SQuAD training dataset
 
+  ## Options.
+
+    * `:base_url` - Dataset base URL.
+
+      Defaults to `"https://rajpurkar.github.io/SQuAD-explorer/dataset/"`
+
+    * `:train_dataset_file` - Training set filename.
+
+      Defaults to `"train-v1.1.json"`
+
+    * `:cache_dir` - Cache directory.
+
+      Defaults to `System.tmp_dir!()`
+
   ## Examples
 
       iex> Scidata.Squad.download()
@@ -35,12 +49,26 @@ defmodule Scidata.Squad do
       ]
   """
 
-  def download() do
-    download_dataset(@train_dataset_file)
+  def download(opts \\ []) do
+    download_dataset(opts[:train_dataset_file] || @train_dataset_file, opts)
   end
 
   @doc """
   Downloads the SQuAD test dataset
+
+  ## Options.
+
+    * `:base_url` - Dataset base URL.
+
+      Defaults to `"https://rajpurkar.github.io/SQuAD-explorer/dataset/"`
+
+    * `:test_dataset_file` - Test set filename.
+
+      Defaults to `"dev-v1.1.json"`
+
+    * `:cache_dir` - Cache directory.
+
+      Defaults to `System.tmp_dir!()`
 
   ## Examples
 
@@ -66,13 +94,15 @@ defmodule Scidata.Squad do
       ]
   """
 
-  def download_test() do
-    download_dataset(@test_dataset_file)
+  def download_test(opts \\ []) do
+    download_dataset(opts[:test_dataset_file] || @test_dataset_file, opts)
   end
 
-  defp download_dataset(dataset_name) do
+  defp download_dataset(dataset_name, opts) do
+    base_url = opts[:base_url] || @base_url
+
     content =
-      Utils.get!(@base_url <> dataset_name).body
+      Utils.get!(base_url <> dataset_name, opts).body
       |> Jason.decode!()
 
     content["data"]

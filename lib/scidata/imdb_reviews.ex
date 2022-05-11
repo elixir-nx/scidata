@@ -18,6 +18,21 @@ defmodule Scidata.IMDBReviews do
   according to each example's label: `:pos` for positive examples, `:neg` for
   negative examples, and `:unsup` for unlabeled examples. If no `example_types`
   are provided, `:pos` and `:neg` examples are fetched.
+
+  ## Options.
+
+    * `:base_url` - Dataset base URL.
+
+      Defaults to `"http://ai.stanford.edu/~amaas/data/sentiment/"`
+
+    * `:dataset_file` - Dataset filename.
+
+      Defaults to `"aclImdb_v1.tar.gz"`
+
+    * `:cache_dir` - Cache directory.
+
+      Defaults to `System.tmp_dir!()`
+
   """
   @spec download(example_types: [train_sentiment]) :: %{
           review: [binary(), ...],
@@ -28,8 +43,10 @@ defmodule Scidata.IMDBReviews do
   @doc """
   Downloads the IMDB reviews test dataset or fetches it locally.
 
-  `example_types` is the same as in `download/2`, but `:unsup` is
+  `example_types` is the same as in `download/1`, but `:unsup` is
   unavailable because all unlabeled examples are in the training set.
+
+  Accepts the same options as `download/1`.
   """
   @spec download_test(example_types: [test_sentiment]) :: %{
           review: [binary(), ...],
@@ -39,8 +56,10 @@ defmodule Scidata.IMDBReviews do
 
   defp download_dataset(dataset_type, opts) do
     example_types = opts[:example_types] || [:pos, :neg]
+    base_url = opts[:base_url] || @base_url
+    dataset_file = opts[:dataset_file] || @dataset_file
 
-    files = Utils.get!(@base_url <> @dataset_file).body
+    files = Utils.get!(base_url <> dataset_file, opts).body
     regex = ~r"#{dataset_type}/(#{Enum.join(example_types, "|")})/"
 
     {inputs, labels} =

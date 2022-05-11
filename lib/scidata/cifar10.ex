@@ -28,6 +28,20 @@ defmodule Scidata.CIFAR10 do
       |> Nx.new_axis(-1)
       |> Nx.equal(Nx.tensor(Enum.to_list(0..9)))
 
+  ## Options.
+
+    * `:base_url` - Dataset base URL.
+
+      Defaults to `"https://www.cs.toronto.edu/~kriz/"`
+
+    * `:dataset_file` - Dataset filename.
+
+      Defaults to `"cifar-10-binary.tar.gz"`
+
+    * `:cache_dir` - Cache directory.
+
+      Defaults to `System.tmp_dir!()`
+
   ## Examples
 
       iex> Scidata.CIFAR10.download()
@@ -40,8 +54,8 @@ defmodule Scidata.CIFAR10 do
         {:u, 8}, {50000}}}
 
   """
-  def download() do
-    download_dataset(:train)
+  def download(opts \\ []) do
+    download_dataset(:train, opts)
   end
 
   @doc """
@@ -49,8 +63,8 @@ defmodule Scidata.CIFAR10 do
 
   Accepts the same options as `download/1`.
   """
-  def download_test() do
-    download_dataset(:test)
+  def download_test(opts \\ []) do
+    download_dataset(:test, opts)
   end
 
   defp parse_images(content) do
@@ -64,8 +78,11 @@ defmodule Scidata.CIFAR10 do
     {Enum.reverse(images), Enum.reverse(labels)}
   end
 
-  defp download_dataset(dataset_type) do
-    files = Utils.get!(@base_url <> @dataset_file).body
+  defp download_dataset(dataset_type, opts) do
+    base_url = opts[:base_url] || @base_url
+    dataset_file = opts[:dataset_file] || @dataset_file
+
+    files = Utils.get!(base_url <> dataset_file, opts).body
 
     {images, labels} =
       files

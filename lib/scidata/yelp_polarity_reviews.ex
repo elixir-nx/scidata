@@ -12,21 +12,36 @@ defmodule Scidata.YelpPolarityReviews do
 
   @doc """
   Downloads the Yelp Polarity Reviews training dataset or fetches it locally.
+
+  ## Options.
+
+    * `:base_url` - Dataset base URL.
+      Defaults to `"https://s3.amazonaws.com/fast-ai-nlp/"`
+    * `:dataset_file` - Dataset filename.
+      Defaults to `"yelp_review_polarity_csv.tgz"`
+    * `:cache_dir` - Cache directory.
+      Defaults to `System.tmp_dir!()`
+
   """
-  @spec download() :: %{review: [binary(), ...], sentiment: [1 | 0]}
-  def download(), do: download_dataset(:train)
+  @spec download(Keyword.t()) :: %{review: [binary(), ...], sentiment: [1 | 0]}
+  def download(opts \\ []), do: download_dataset(:train, opts)
 
   @doc """
   Downloads the Yelp Polarity Reviews test dataset or fetches it locally.
+
+  Accepts the same options as `download/1`.
   """
-  @spec download_test() :: %{
+  @spec download_test(Keyword.t()) :: %{
           review: [binary(), ...],
           sentiment: [1 | 0]
         }
-  def download_test(), do: download_dataset(:test)
+  def download_test(opts \\ []), do: download_dataset(:test, opts)
 
-  defp download_dataset(dataset_type) do
-    files = Utils.get!(@base_url <> @dataset_file).body
+  defp download_dataset(dataset_type, opts) do
+    base_url = opts[:base_url] || @base_url
+    dataset_file = opts[:dataset_file] || @dataset_file
+
+    files = Utils.get!(base_url <> dataset_file, opts).body
     regex = ~r"#{dataset_type}"
 
     records =

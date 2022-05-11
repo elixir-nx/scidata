@@ -6,7 +6,8 @@ defmodule Scidata.Caltech101 do
   require Scidata.Utils
   alias Scidata.Utils
 
-  @base_url "https://s3.amazonaws.com/fast-ai-imageclas/caltech_101.tgz"
+  @base_url "https://s3.amazonaws.com/fast-ai-imageclas/"
+  @dataset_file "caltech_101.tgz"
   @labels_shape {9144, 1}
   @label_mapping %{
     accordion: 0,
@@ -128,6 +129,20 @@ defmodule Scidata.Caltech101 do
       |> Nx.new_axis(-1)
       |> Nx.equal(Nx.tensor(Enum.to_list(1..102)))
 
+  ## Options.
+
+    * `:base_url` - Dataset base URL.
+
+      Defaults to `"https://s3.amazonaws.com/fast-ai-imageclas/"`
+
+    * `:dataset_file` - Dataset filename.
+
+      Defaults to `"caltech_101.tgz"`
+
+    * `:cache_dir` - Cache directory.
+
+      Defaults to `System.tmp_dir!()`
+
   """
   def download(opts \\ []) do
     unless Code.ensure_loaded?(StbImage) do
@@ -138,8 +153,11 @@ defmodule Scidata.Caltech101 do
   end
 
   defp download_dataset(_dataset_type, opts) do
+    base_url = opts[:base_url] || @base_url
+    dataset_file = opts[:dataset_file] || @dataset_file
+
     # Skip first file since it's a temporary file.
-    [_ | files] = Utils.get!(@base_url).body
+    [_ | files] = Utils.get!(base_url <> dataset_file, opts).body
 
     {images, shapes, labels} =
       files

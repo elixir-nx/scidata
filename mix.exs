@@ -62,6 +62,10 @@ defmodule Scidata.MixProject do
           Scidata.FashionMNIST,
           Scidata.KuzushijiMNIST,
           Scidata.MNIST
+        ],
+        Misc: [
+          Scidata.Iris,
+          Scidata.Wine
         ]
       ]
     ]

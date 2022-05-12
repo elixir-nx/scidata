@@ -13,6 +13,8 @@ Scidata currently supports the following training and test datasets:
 - MNIST
 - SQuAD
 - Yelp Reviews (Full and Polarity)
+- Iris
+- Wine
 
 Download or fetch datasets locally:
 

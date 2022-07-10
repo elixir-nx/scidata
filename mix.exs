@@ -33,7 +33,8 @@ defmodule Scidata.MixProject do
       {:ex_doc, ">= 0.24.0", only: :dev, runtime: false},
       {:nimble_csv, "~> 1.1"},
       {:jason, "~> 1.0"},
-      {:stb_image, "~> 0.4", optional: true}
+      {:stb_image, "~> 0.4", optional: true},
+      {:req, "~> 0.3"}
     ]
   end
 

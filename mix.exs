@@ -34,7 +34,7 @@ defmodule Scidata.MixProject do
       {:nimble_csv, "~> 1.1"},
       {:jason, "~> 1.0"},
       {:stb_image, "~> 0.4", optional: true},
-      {:req, "~> 0.3"}
+      {:castore, "~> 0.1"}
     ]
   end
 

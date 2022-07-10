@@ -21,13 +21,6 @@ defmodule Scidata.CIFAR100 do
       {{images_binary, images_type, images_shape},
        {labels_binary, labels_type, labels_shape}}
 
-  If you want to one-hot encode the labels, you can:
-
-      labels_binary
-      |> Nx.from_binary(labels_type)
-      |> Nx.new_axis(-1)
-      |> Nx.equal(Nx.tensor(Enum.to_list(0..9)))
-
   ## Options.
 
     * `:base_url` - Dataset base URL.

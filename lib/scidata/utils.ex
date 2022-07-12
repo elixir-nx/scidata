@@ -32,7 +32,15 @@ defmodule Scidata.Utils do
   end
 
   defp run!(request) do
-    http_opts = []
+    http_opts = [
+      ssl: [
+        verify: :verify_peer,
+        cacertfile: CAStore.file_path(),
+        customize_hostname_check: [
+          match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
+        ]
+      ]
+    ]
     opts = [body_format: :binary]
     arg = {request.url, request.headers}
 

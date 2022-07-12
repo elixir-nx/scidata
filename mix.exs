@@ -1,7 +1,7 @@
 defmodule Scidata.MixProject do
   use Mix.Project
 
-  @version "0.1.8"
+  @version "0.1.9"
   @repo_url "https://github.com/elixir-nx/scidata"
 
   def project do
@@ -33,7 +33,8 @@ defmodule Scidata.MixProject do
       {:ex_doc, ">= 0.24.0", only: :dev, runtime: false},
       {:nimble_csv, "~> 1.1"},
       {:jason, "~> 1.0"},
-      {:stb_image, "~> 0.4", optional: true}
+      {:stb_image, "~> 0.4", optional: true},
+      {:castore, "~> 0.1"}
     ]
   end
 

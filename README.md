@@ -39,7 +39,7 @@ batched_images =
   |> Nx.from_binary(images_type)
   |> Nx.reshape(images_shape)
   |> Nx.divide(255)
-  |> Nx.to_batched_list(32)
+  |> Nx.to_batched(32)
 
 # One-hot-encode and batch labels
 {labels_binary, labels_type, _shape} = train_labels
@@ -49,7 +49,7 @@ batchd_labels =
   |> Nx.from_binary(labels_type)
   |> Nx.new_axis(-1)
   |> Nx.equal(Nx.tensor(Enum.to_list(0..9)))
-  |> Nx.to_batched_list(32)
+  |> Nx.to_batched(32)
 ```
 
 ## Installation

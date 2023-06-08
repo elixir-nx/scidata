@@ -3,8 +3,6 @@ defmodule Scidata.Iris do
   Module for downloading the [Iris Data Set](https://archive.ics.uci.edu/ml/datasets/iris).
   """
 
-  # @base_url "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
-  # @dataset_file "iris.data"
   @base_url "https://archive.ics.uci.edu/static/public/53/iris.zip"
   @dataset_file "iris.data"
 

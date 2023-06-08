@@ -1,6 +1,6 @@
 defmodule Scidata.Iris do
   @moduledoc """
-  Module for downloading the [Iris Data Set](https://archive.ics.uci.edu/ml/datasets/iris).
+  Module for downloading the [Iris Data Set](https://archive.ics.uci.edu/dataset/53/iris).
   """
 
   @base_url "https://archive.ics.uci.edu/static/public/53/iris.zip"
@@ -11,7 +11,8 @@ defmodule Scidata.Iris do
   @doc """
   Downloads the Iris dataset or fetches it locally.
 
-  ## Information ([source](https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.names))
+  ## Information about the dataset are available in file `iris.names` inside the
+     [zip file](https://archive.ics.uci.edu/static/public/53/iris.zip).
 
   ### Attribute
 
@@ -30,7 +31,7 @@ defmodule Scidata.Iris do
 
     * `:base_url` - Dataset base URL.
 
-      Defaults to `"https://archive.ics.uci.edu/ml/machine-learning-databases/iris/"`
+      Defaults to `"https://archive.ics.uci.edu/static/public/53/iris.zip"`
 
     * `:dataset_file` - Dataset filename.
 

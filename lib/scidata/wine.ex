@@ -1,6 +1,6 @@
 defmodule Scidata.Wine do
   @moduledoc """
-  Module for downloading the [Wine Data Set](https://archive.ics.uci.edu/ml/datasets/wine).
+  Module for downloading the [Wine Data Set](https://archive.ics.uci.edu/dataset/109/wine).
   """
 
   @base_url "https://archive.ics.uci.edu/dataset/109/wine.zip"
@@ -11,7 +11,8 @@ defmodule Scidata.Wine do
   @doc """
   Downloads the Wine dataset or fetches it locally.
 
-  ## Information ([source](https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.names))
+  ## Information about the dataset are available in file `iris.names` inside the
+     [zip file](https://archive.ics.uci.edu/dataset/109/wine.zip).
 
   ### Attribute
 
@@ -39,7 +40,7 @@ defmodule Scidata.Wine do
 
     * `:base_url` - Dataset base URL.
 
-      Defaults to `"https://archive.ics.uci.edu/ml/machine-learning-databases/wine/"`
+      Defaults to `"https://archive.ics.uci.edu/dataset/109/wine.zip"`
 
     * `:dataset_file` - Dataset filename.
 

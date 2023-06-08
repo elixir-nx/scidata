@@ -3,7 +3,7 @@ defmodule Scidata.Wine do
   Module for downloading the [Wine Data Set](https://archive.ics.uci.edu/ml/datasets/wine).
   """
 
-  @base_url "https://archive.ics.uci.edu/ml/machine-learning-databases/wine/"
+  @base_url "https://archive.ics.uci.edu/dataset/109/wine.zip"
   @dataset_file "wine.data"
 
   alias Scidata.Utils
@@ -54,8 +54,17 @@ defmodule Scidata.Wine do
     base_url = opts[:base_url] || @base_url
     dataset_file = opts[:dataset_file] || @dataset_file
 
+    [{_, data}] =
+      Utils.get!(base_url, opts).body
+      |> Enum.filter(fn {fname, _} ->
+        String.match?(
+          List.to_string(fname),
+          ~r/#{dataset_file}/
+        )
+      end)
+
     label_attr =
-      Utils.get!(base_url <> dataset_file, opts).body
+      data
       |> String.split()
       |> Enum.map(&String.split(&1, ","))
       |> Enum.map(fn row ->

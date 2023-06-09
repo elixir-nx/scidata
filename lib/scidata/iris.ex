@@ -1,9 +1,9 @@
 defmodule Scidata.Iris do
   @moduledoc """
-  Module for downloading the [Iris Data Set](https://archive.ics.uci.edu/ml/datasets/iris).
+  Module for downloading the [Iris Data Set](https://archive.ics.uci.edu/dataset/53/iris).
   """
 
-  @base_url "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/"
+  @base_url "https://archive.ics.uci.edu/static/public/53/iris.zip"
   @dataset_file "iris.data"
 
   alias Scidata.Utils
@@ -11,7 +11,8 @@ defmodule Scidata.Iris do
   @doc """
   Downloads the Iris dataset or fetches it locally.
 
-  ## Information ([source](https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.names))
+  ## Information about the dataset are available in file `iris.names` inside the
+     [zip file](https://archive.ics.uci.edu/static/public/53/iris.zip).
 
   ### Attribute
 
@@ -30,7 +31,7 @@ defmodule Scidata.Iris do
 
     * `:base_url` - Dataset base URL.
 
-      Defaults to `"https://archive.ics.uci.edu/ml/machine-learning-databases/iris/"`
+      Defaults to `"https://archive.ics.uci.edu/static/public/53/iris.zip"`
 
     * `:dataset_file` - Dataset filename.
 
@@ -45,7 +46,16 @@ defmodule Scidata.Iris do
     base_url = opts[:base_url] || @base_url
     dataset_file = opts[:dataset_file] || @dataset_file
 
-    Utils.get!(base_url <> dataset_file, opts).body
+    [{_, data}] =
+      Utils.get!(base_url, opts).body
+      |> Enum.filter(fn {fname, _} ->
+        String.match?(
+          List.to_string(fname),
+          ~r/#{dataset_file}/
+        )
+      end)
+
+    data
     |> String.split()
     |> Enum.reverse()
     |> Enum.reduce({[], []}, fn row_str, {feature_acc, label_acc} ->

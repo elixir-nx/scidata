@@ -41,6 +41,7 @@ defmodule Scidata.Utils do
         ]
       ]
     ]
+
     opts = [body_format: :binary]
     arg = {request.url, request.headers}
 
@@ -66,6 +67,11 @@ defmodule Scidata.Utils do
     cond do
       String.ends_with?(request.url, ".tar.gz") or String.ends_with?(request.url, ".tgz") ->
         {:ok, files} = :erl_tar.extract({:binary, response.body}, [:memory, :compressed])
+        response = %{response | body: files}
+        {request, response}
+
+      String.ends_with?(request.url, ".zip") ->
+        {:ok, files} = :zip.extract(response.body, [:memory])
         response = %{response | body: files}
         {request, response}
 

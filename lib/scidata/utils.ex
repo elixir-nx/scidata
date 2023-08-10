@@ -9,7 +9,7 @@ defmodule Scidata.Utils do
 
     request
     |> if_modified_since(opts)
-    |> run!()
+    |> run!(opts)
     |> raise_errors()
     |> handle_cache(opts)
     |> decode()
@@ -31,10 +31,12 @@ defmodule Scidata.Utils do
     Calendar.strftime(datetime, "%a, %d %b %Y %H:%m:%S GMT")
   end
 
-  defp run!(request) do
+  defp run!(request, opts) do
+    verify = opts[:ssl_verify] || :verify_peer
+
     http_opts = [
       ssl: [
-        verify: :verify_peer,
+        verify: verify,
         cacertfile: CAStore.file_path(),
         customize_hostname_check: [
           match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
@@ -42,10 +44,10 @@ defmodule Scidata.Utils do
       ]
     ]
 
-    opts = [body_format: :binary]
+    request_opts = [body_format: :binary]
     arg = {request.url, request.headers}
 
-    case :httpc.request(:get, arg, http_opts, opts) do
+    case :httpc.request(:get, arg, http_opts, request_opts) do
       {:ok, {{_, status, _}, headers, body}} ->
         response = %{status: status, headers: headers, body: body}
         {request, response}

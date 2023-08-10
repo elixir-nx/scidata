@@ -55,6 +55,9 @@ defmodule Scidata.Wine do
     base_url = opts[:base_url] || @base_url
     dataset_file = opts[:dataset_file] || @dataset_file
 
+    # Temporary fix to cope with bad cert on source site
+    opts = Keyword.put(opts, :ssl_verify, :verify_none)
+
     [{_, data}] =
       Utils.get!(base_url, opts).body
       |> Enum.filter(fn {fname, _} ->

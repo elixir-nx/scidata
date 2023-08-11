@@ -5,6 +5,8 @@ defmodule Scidata.Wine do
 
   @base_url "https://archive.ics.uci.edu/static/public/109/wine.zip"
   @dataset_file "wine.data"
+  @data_hash <<107, 230, 177, 32, 63, 61, 81, 223, 11, 85, 58, 112, 229, 123, 138, 114, 60,
+  212, 5, 104, 57, 88, 32, 79, 150, 210, 61, 124, 214, 174, 166, 89>>
 
   alias Scidata.Utils
 
@@ -55,6 +57,9 @@ defmodule Scidata.Wine do
     base_url = opts[:base_url] || @base_url
     dataset_file = opts[:dataset_file] || @dataset_file
 
+    # Temporary fix to cope with bad cert on source site
+    opts = Keyword.put(opts, :ssl_verify, :verify_none)
+
     [{_, data}] =
       Utils.get!(base_url, opts).body
       |> Enum.filter(fn {fname, _} ->
@@ -63,6 +68,10 @@ defmodule Scidata.Wine do
           ~r/#{dataset_file}/
         )
       end)
+
+    if :crypto.hash(:sha256, data) != @data_hash do
+      raise RuntimeError, "Dataset hashed to unexpected value"
+    end
 
     label_attr =
       data

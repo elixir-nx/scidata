@@ -5,6 +5,8 @@ defmodule Scidata.Iris do
 
   @base_url "https://archive.ics.uci.edu/static/public/53/iris.zip"
   @dataset_file "iris.data"
+  @data_hash <<111, 96, 139, 113, 167, 49, 114, 22, 49, 155, 77, 39, 180, 217, 188, 132, 230,
+  171, 215, 52, 237, 167, 135, 43, 113, 164, 88, 86, 158, 38, 86, 192>>
 
   alias Scidata.Utils
 
@@ -57,6 +59,10 @@ defmodule Scidata.Iris do
           ~r/#{dataset_file}/
         )
       end)
+
+    if :crypto.hash(:sha256, data) != @data_hash do
+      raise RuntimeError, "Dataset hashed to unexpected value"
+    end
 
     data
     |> String.split()

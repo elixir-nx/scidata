@@ -57,7 +57,7 @@ batchd_labels =
 ```elixir
 def deps do
   [
-    {:scidata, "~> 0.1.10"}
+    {:scidata, "~> 0.1.11"}
   ]
 end
 ```
